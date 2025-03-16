@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = ArduinoViewModel()
-
+    
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 VStack(spacing: 20) {
                     
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(viewModel.isOn ? .green : Color.gray)
+                        .fill(viewModel.isOn ? .red : Color.gray)
                         .frame(width: geometry.size.width - 20, height: 20)
                         .padding(.vertical)
                         .onTapGesture {
@@ -42,18 +42,11 @@ struct ContentView: View {
                     }
                     .padding()
                     
-                    Spacer()
+                    LedMatrix()
                 }
-                .onChange(of: viewModel.isOn) { oldValue, newValue in
+                .onChange(of: viewModel.isOn) { _,newValue in
                     let command = ControlCommand(device: "LED", action: newValue ? "on" : "off")
-                    ConnectionService.sendRequest(command: command) { result in
-                        switch result {
-                        case .success:
-                            print("Command \(command.device) \(command.action) sent successfully.")
-                        case .failure(let error):
-                            print("Failed to send command: \(error.localizedDescription)")
-                        }
-                    }
+                    ConnectionService.sendRequest(command: command, arduinoIP: viewModel.arduinoIP)
                 }
                 .sheet(isPresented: $viewModel.showSettingsView) {
                     SettingsView()
@@ -67,8 +60,9 @@ struct ContentView: View {
                             Image(systemName: "gearshape")
                         }
                         .buttonStyle(.bordered)
-                        .tint(.secondary)
+                        .tint(Color.accentColor)
                     }
+                    
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
                             viewModel.blink()
@@ -76,10 +70,9 @@ struct ContentView: View {
                             Text("Blink")
                         }
                         .buttonStyle(.bordered)
-                        .tint(viewModel.isBlinking ? .green : .primary)
+                        .tint(viewModel.isBlinking ? Color.accentColor : .primary)
                     }
                 }
-
             }
         }
     }

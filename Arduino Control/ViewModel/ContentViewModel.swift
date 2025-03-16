@@ -15,7 +15,6 @@ class ArduinoViewModel: ObservableObject {
     @Published var onDuration: Double = 1.0
     @Published var offDuration: Double = 1.0
     private var blinkTimer: Timer?
-    private var connectionService = ConnectionService()
     var isBlinking: Bool { blinkTimer != nil }
   
     func blink() {
