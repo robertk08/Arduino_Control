@@ -9,65 +9,69 @@ import SwiftUI
 
 struct LedMatrix: View {
     @State private var isOn = true
-    let rows = 5
-    let columns = 10
-    @State private var isOnArray: [[Bool]]
-
-    init() {
-        _isOnArray = State(initialValue: Array(repeating: Array(repeating: false, count: columns), count: rows))
+    @State var rows: Int
+    @State var columns: Int
+    @Binding var matrix: Matrix
+    
+    init(matrix: Binding<Matrix>) {
+        self._matrix = matrix
+        self._rows = State(initialValue: matrix.values.wrappedValue.count)
+        self._columns = State(initialValue: matrix.values.wrappedValue.first?.count ?? 0)
     }
-
+    
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                HStack {
-                    Text("Led mode:")
-                        .font(.title3)
-                        .padding(.horizontal)
-                    
-                    ZStack {
-                        HStack {
-                            RoundedRectangle(cornerRadius: 5)
-                                .fill(Color.secondary)
-                                .frame(width: 50, height: 50)
-                                .padding(10)
-                                .onTapGesture {
-                                    withAnimation(.snappy) {
-                                        isOn = false
+                GroupBox {
+                    HStack {
+                        Text("Led mode:")
+                            .font(.title3)
+                            .padding(.horizontal)
+                        
+                        ZStack {
+                            HStack {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color.secondary)
+                                    .frame(width: 50, height: 50)
+                                    .padding(.horizontal, 10)
+                                    .onTapGesture {
+                                        withAnimation(.snappy) {
+                                            isOn = false
+                                        }
                                     }
-                                }
-                            RoundedRectangle(cornerRadius: 5)
-                                .fill(Color.cyan)
-                                .frame(width: 50, height: 50)
-                                .padding(10)
-                                .onTapGesture {
-                                    withAnimation(.snappy) {
-                                        isOn = true
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color.accentColor)
+                                    .frame(width: 50, height: 50)
+                                    .padding(.horizontal, 10)
+                                    .onTapGesture {
+                                        withAnimation(.snappy) {
+                                            isOn = true
+                                        }
                                     }
-                                }
+                            }
+                            RoundedRectangle(cornerRadius: 5)
+                                .stroke(Color.primary, lineWidth: 4)
+                                .frame(width: 50, height: 50)
+                                .offset(x: isOn ? 40 : -40)
                         }
-                        RoundedRectangle(cornerRadius: 5)
-                            .stroke(Color.accentColor, lineWidth: 4)
-                            .frame(width: 50, height: 50)
-                            .offset(x: isOn ? 40 : -40)
+                        .frame(width: geometry.size.width / 2)
                     }
-                    .frame(width: geometry.size.width / 2)
                 }
+                .padding(.vertical, 10)
 
-                let cellSize = (geometry.size.width - CGFloat(columns) * 10) / CGFloat(columns) - 10 / CGFloat(columns)
-
+                let cellSize = (geometry.size.width - CGFloat(columns) * 10) / CGFloat(columns)
+                
                 VStack(spacing: 10) {
                     ForEach(0..<rows, id: \.self) { row in
                         HStack(spacing: 10) {
                             ForEach(0..<columns, id: \.self) { col in
                                 RoundedRectangle(cornerRadius: 5)
-                                    .fill(isOnArray[row][col] ? Color.cyan : Color.secondary)
+                                    .fill(matrix.values[row][col] ? Color.accentColor : Color.secondary)
                                     .frame(width: cellSize, height: cellSize)
                             }
                         }
                     }
                 }
-                .padding(.leading, 10)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
@@ -89,12 +93,12 @@ struct LedMatrix: View {
 
         if (0..<columns).contains(x), (0..<rows).contains(y) {
             DispatchQueue.main.async {
-                isOnArray[y][x] = isOn
+                matrix.values[y][x] = isOn
             }
         }
     }
 }
 
 #Preview {
-    LedMatrix()
+    //LedMatrix()
 }
