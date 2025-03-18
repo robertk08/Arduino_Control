@@ -10,4 +10,5 @@ import Foundation
 struct ControlCommand: Codable {
     var device: String
     var action: String
+    var matrixValues: [[Bool]]?
 }

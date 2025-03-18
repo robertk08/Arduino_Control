@@ -59,13 +59,18 @@ struct ContentView: View {
                         
                         MatrixOverviewView(matrixes: $matrixStore.matrices, selectedMatrix: $selectedMatrix)
                         
-                        Button("Save Matrix") {
-                            matrixStore.matrices.append(
-                                Matrix(id: UUID(), name: "Scene \(matrixStore.matrices.count + 1)", values: selectedMatrix.values)
-                            )
+                        HStack {
+                            Button("Save Matrix") {
+                                matrixStore.matrices.append(
+                                    Matrix(id: UUID(), name: "Scene \(matrixStore.matrices.count + 1)", values: selectedMatrix.values)
+                                )
+                            }
+                            .buttonStyle(BorderedButtonStyle())
+                            Button("Save Edit (Override)") {
+                                matrixStore.matrices[0] = selectedMatrix
+                            }
+                            .buttonStyle(BorderedButtonStyle())
                         }
-                        .buttonStyle(BorderedButtonStyle())
-                        
                     }
                     .onChange(of: selectedMatrix) { _, newValue in
                         //update 
