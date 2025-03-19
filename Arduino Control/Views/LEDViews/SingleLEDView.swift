@@ -14,36 +14,37 @@ struct SingleLEDView: View {
         VStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(viewModel.isOn ? .accentColor : Color.gray)
-                .frame(height: 20)
-                .padding()
+                .frame(height: 35)
+                .padding(.top)
+                .padding(.horizontal)
                 .onTapGesture {
                     viewModel.isOn.toggle()
-                    Haptic.feedback(.selection)
+                    Haptic.feedback(.rigid)
+                }
+                .overlay {
+                    Image(systemName: "memorychip")
+                        .padding(.top)
                 }
             
             GroupBox {
-                VStack {
-                    Text("On Duration: \(viewModel.onDuration, specifier: "%.1f")s")
-                    Slider(value: $viewModel.onDuration, in: 0.1...5.0, step: 0.1)
-                }
-                
-                VStack {
-                    Text("Off Duration: \(viewModel.offDuration, specifier: "%.1f")s")
-                    Slider(value: $viewModel.offDuration, in: 0.1...5.0, step: 0.1)
-                }
+                Text("On Duration: \(viewModel.onDuration, specifier: "%.2f")s")
+                Slider(value: $viewModel.onDuration, in: 0.01...5.0, step: 0.01)
+                Text("Off Duration: \(viewModel.offDuration, specifier: "%.02f")s")
+                Slider(value: $viewModel.offDuration, in: 0.01...5.0, step: 0.01)
             }
             .padding()
+            
+            Divider()
         }
-        .onChange(of: viewModel.isOn) { _,newValue in
-            let command = ControlCommand(device: "LED", action: newValue ? "on" : "off")
-            ConnectionService.sendRequest(command: command, arduinoIP: viewModel.arduinoIP)
+        .onChange(of: viewModel.isOn) { _,_ in
+            viewModel.updateLED()
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     viewModel.blink()
                 } label: {
-                    Text("Blink")
+                    Image(systemName: viewModel.isBlinking ? "lightswitch.on" : "lightswitch.off")
                 }
                 .buttonStyle(.bordered)
                 .tint(viewModel.isBlinking ? Color.accentColor : .primary)

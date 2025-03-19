@@ -8,34 +8,32 @@
 import SwiftUI
 
 struct MatrixOverviewView: View {
+    @StateObject private var viewModel = MatrixOverviewViewModel()
     @Binding var selectedMatrix: Matrix
-    @State var showListView = false
+    @ObservedObject var storage = MatrixStorage.shared
     
     var body: some View {
         ScrollView(.horizontal) {
             HStack {
-                ForEach(MatrixStorage.shared.matrixes.indices, id: \.self) { index in
+                ForEach(storage.matrixes.indices, id: \.self) { index in
                     GroupBox {
                         MatrixView(index: index)
-                            .frame(width: 150, height: 110)
+                            .frame(width: 150, height: 135)
                     }
                     .padding(10)
                     .contextMenu {
                         Button("Delete") {
-                            if MatrixStorage.shared.matrixes.count > 1 {
-                                Haptic.feedback(.success)
-                                MatrixStorage.shared.matrixes.remove(at: index)
-                            }
+                            Haptic.feedback(.success)
+                            storage.matrixes.remove(at: index)
                         }
-                        .disabled(MatrixStorage.shared.matrixes.count == 1)
                     }
                     .onTapGesture {
-                        selectedMatrix = MatrixStorage.shared.matrixes[index]
+                        selectedMatrix = viewModel.newSelectedMatrix(selectedMatrix, index: index)
                     }
                 }
                 GroupBox {
                     Button(action: {
-                        showListView = true
+                        viewModel.showListView = true
                     }, label: {
                         VStack {
                             Image(systemName: "ellipsis")
@@ -43,16 +41,16 @@ struct MatrixOverviewView: View {
                                 .scaledToFit()
                                 .frame(width: 80)
                         }
-                        .frame(width: 120, height: 90)
+                        .frame(width: 120, height: 120)
                     })
                     .tint(.accentColor)
-                    .buttonStyle(BorderedButtonStyle())
-                    .frame(width: 150, height: 110)
+                    .buttonStyle(.bordered)
+                    .frame(width: 150, height: 135)
                 }
                 .padding(10)
                 
             }
-            .sheet(isPresented: $showListView) {
+            .sheet(isPresented: $viewModel.showListView) {
                 MatrixListView()
             }
         }

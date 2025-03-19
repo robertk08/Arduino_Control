@@ -17,6 +17,7 @@ class SingleLEDViewModel: ObservableObject {
     var isBlinking: Bool { blinkTimer != nil }
   
     func blink() {
+        Haptic.feedback(.success)
         if blinkTimer != nil {
             blinkTimer?.invalidate()
             blinkTimer = nil
@@ -40,5 +41,11 @@ class SingleLEDViewModel: ObservableObject {
     
     deinit {
         blinkTimer?.invalidate()
+    }
+    
+    func updateLED() {
+        Haptic.feedback(.selection)
+        let command = ControlCommand(device: "LED", action: isOn ? "on" : "off")
+        ConnectionService.sendRequest(command: command, arduinoIP: arduinoIP)
     }
 }

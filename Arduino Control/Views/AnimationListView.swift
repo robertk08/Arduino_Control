@@ -1,13 +1,13 @@
 //
-//  MatrixListView.swift
+//  AnimationListView.swift
 //  Arduino Control
 //
-//  Created by Robert Krause on 18.03.25.
+//  Created by Robert Krause on 19.03.25.
 //
 
 import SwiftUI
 
-struct MatrixListView: View {
+struct AnimationListView: View {
     var body: some View {
         List {
             ForEach(MatrixStorage.shared.matrixes, id: \.id) { matrix in
@@ -15,7 +15,7 @@ struct MatrixListView: View {
             }
             .onDelete { indices in
                 MatrixStorage.shared.matrixes.remove(atOffsets: indices)
-                Haptic.feedback(.rigid)
+                Haptic.feedback(.success)
             }
             .onMove { indices, newOffset in
                 MatrixStorage.shared.matrixes.move(fromOffsets: indices, toOffset: newOffset)
@@ -27,5 +27,5 @@ struct MatrixListView: View {
 }
 
 #Preview {
-    MatrixListView()
+    AnimationListView()
 }

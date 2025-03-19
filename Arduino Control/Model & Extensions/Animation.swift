@@ -10,7 +10,7 @@ import SwiftUI
 struct Animation: Identifiable, Codable, Equatable {
     var id: UUID
     var name: String
-    var repeating: Bool
     var delay: Double
+    var repeating: Bool
     var values: [Matrix]
 }

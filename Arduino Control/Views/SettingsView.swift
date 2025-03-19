@@ -19,14 +19,13 @@ struct SettingsView: View {
                     .onTapGesture {
                         Haptic.feedback(.selection)
                     }
-                Text("Connect to Arduino Wifi to function.")
                 Button("Change App Icon") {
                     Haptic.feedback(.success)
-                    viewModel.isSheetPresented = true
+                    viewModel.isIconSelectionViewPresented = true
                 }
             }
             .navigationTitle("Settings")
-            .sheet(isPresented: $viewModel.isSheetPresented) {
+            .sheet(isPresented: $viewModel.isIconSelectionViewPresented) {
                 IconSelectionView()
             }
         }

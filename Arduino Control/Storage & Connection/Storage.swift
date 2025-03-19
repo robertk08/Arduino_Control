@@ -1,5 +1,5 @@
 //
-//  MatrixStorage.swift
+//  Storage.swift
 //  Arduino Control
 //
 //  Created by Robert Krause on 18.03.25.
@@ -16,7 +16,7 @@ class MatrixStorage: ObservableObject {
     init() {
         matrixes = UserDefaults.standard.load(forKey: "matrixes")
         if matrixes.isEmpty {
-            matrixes = [Matrix(id: UUID(), name: "Scene 1", values: Array(repeating: Array(repeating: false, count: 10), count: 5))]
+            matrixes = [Matrix(id: UUID(), name: "Scene 1", values: Array(repeating: Array(repeating: false, count: 12), count: 8))]
             save()
         }
     }

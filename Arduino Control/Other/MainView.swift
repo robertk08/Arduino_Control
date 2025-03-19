@@ -12,7 +12,12 @@ struct MainView: View {
         TabView {
             LEDControlView()
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label("LED", systemImage: "memorychip")
+                }
+            
+            AnimationListView()
+                .tabItem {
+                    Label("Animation", systemImage: "circle.dotted.and.circle")
                 }
             
             SettingsView()
