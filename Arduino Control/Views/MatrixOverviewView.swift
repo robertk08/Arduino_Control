@@ -8,29 +8,29 @@
 import SwiftUI
 
 struct MatrixOverviewView: View {
-    @Binding var matrixes: [Matrix]
     @Binding var selectedMatrix: Matrix
     @State var showListView = false
     
     var body: some View {
         ScrollView(.horizontal) {
             HStack {
-                ForEach(matrixes.indices, id: \.self) { index in
+                ForEach(MatrixStorage.shared.matrixes.indices, id: \.self) { index in
                     GroupBox {
-                        MatrixView(matrix: $matrixes[index])
+                        MatrixView(index: index)
                             .frame(width: 150, height: 110)
                     }
                     .padding(10)
                     .contextMenu {
                         Button("Delete") {
-                            if matrixes.count > 1 {
-                                matrixes.remove(at: index)
+                            if MatrixStorage.shared.matrixes.count > 1 {
+                                Haptic.feedback(.success)
+                                MatrixStorage.shared.matrixes.remove(at: index)
                             }
                         }
-                        .disabled(matrixes.count == 1)
+                        .disabled(MatrixStorage.shared.matrixes.count == 1)
                     }
                     .onTapGesture {
-                        selectedMatrix = matrixes[index]
+                        selectedMatrix = MatrixStorage.shared.matrixes[index]
                     }
                 }
                 GroupBox {
@@ -53,8 +53,12 @@ struct MatrixOverviewView: View {
                 
             }
             .sheet(isPresented: $showListView) {
-                MatrixListView(matrixes: $matrixes)
+                MatrixListView()
             }
         }
     }
+}
+
+#Preview {
+    MatrixOverviewView(selectedMatrix: .constant(MatrixStorage.shared.matrixes.first!))
 }

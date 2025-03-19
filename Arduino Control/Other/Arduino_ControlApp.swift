@@ -11,7 +11,7 @@ import SwiftUI
 struct Arduino_ControlApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }

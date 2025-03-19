@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct MatrixView: View {
-    @Binding var matrix: Matrix
+    @State var matrix: Matrix
+    
+    init(index: Int) {
+        self.matrix = MatrixStorage.shared.matrixes[index]
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -37,11 +41,5 @@ struct MatrixView: View {
 }
 
 #Preview {
-    MatrixView(matrix: .constant(Matrix(id: UUID(), name: "Test", values: [
-        [false, false, false, false, true,  true,  true,  true,  false, true],
-        [false, false, true,  false, false, true,  true,  true,  true,  true],
-        [false, true,  false, true,  false, true,  false, true,  true,  false],
-        [false, false, false, false, false, true,  false, false, false, true],
-        [false, true,  true,  true,  false, true,  false, false, true,  false]
-    ])))
+    MatrixView(index: 1)
 }

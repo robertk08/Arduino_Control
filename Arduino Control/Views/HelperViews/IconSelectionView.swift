@@ -21,6 +21,7 @@ struct IconSelectionView: View {
                 HStack {
                     ForEach(icons, id: \.self) { icon in
                         Button(action: {
+                            Haptic.feedback(.rigid)
                             if let index = icons.firstIndex(of: icon) {
                                 let iconName = "AppIcon \(index + 1)"
                                 UIApplication.shared.setAlternateIconName(iconName == "AppIcon 1" ? nil : iconName) { error in

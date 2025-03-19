@@ -1,16 +1,15 @@
 //
-//  ContentViewModel.swift
+//  SingleLEDViewModel.swift
 //  Arduino Control
 //
-//  Created by Robert Krause on 16.03.25.
+//  Created by Robert Krause on 19.03.25.
 //
 
 import Foundation
 import SwiftUI
 
-class ArduinoViewModel: ObservableObject {
+class SingleLEDViewModel: ObservableObject {
     @AppStorage("arduinoIP") var arduinoIP = "192.168.4.1"
-    @Published var showSettingsView = false
     @Published var isOn = false
     @Published var onDuration: Double = 1.0
     @Published var offDuration: Double = 1.0

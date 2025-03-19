@@ -8,17 +8,15 @@
 import Foundation
 
 extension UserDefaults {
-    private var key: String { "matrices" }
-    
-    func save(_ matrices: [Matrix]) {
-        if let encoded = try? JSONEncoder().encode(matrices) {
+    func save<T: Codable>(_ objects: [T], forKey key: String) {
+        if let encoded = try? JSONEncoder().encode(objects) {
             set(encoded, forKey: key)
         }
     }
     
-    func load() -> [Matrix] {
+    func load<T: Codable>(forKey key: String) -> [T] {
         guard let data = data(forKey: key),
-              let decoded = try? JSONDecoder().decode([Matrix].self, from: data) else {
+              let decoded = try? JSONDecoder().decode([T].self, from: data) else {
             return []
         }
         return decoded
