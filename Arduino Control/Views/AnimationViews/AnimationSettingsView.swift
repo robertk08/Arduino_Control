@@ -18,18 +18,18 @@ struct AnimationSettingsView: View {
     var body: some View {
         NavigationView {
             VStack {
-                Form {
-                    Section(header: Text("Animation Details")) {
-                        TextField("Animation Name", text: $name)
-                        Slider(value: $delay, in: 0...5, step: 0.1) {
-                            Text("Delay: \(String(format: "%.1f", delay)) s")
-                        }
-                        Toggle("Repeat Animation", isOn: $repeating)
+                GroupBox {
+                    Text("Animation Details")
+                    TextField("Animation Name", text: $name)
+                    Slider(value: $delay, in: 0...5, step: 0.1) {
+                        Text("Delay: \(String(format: "%.1f", delay)) s")
                     }
-                    Section(header: Text("Matrixes")) {
-
-                    }
+                    Toggle("Repeat Animation", isOn: $repeating)
                 }
+                .padding()
+                
+                Text("Select Matrixes")
+                SelectMatrixView(matrixes: $matrixes)
             }
             .navigationTitle(isNewAnimation ? "New Animation" : "Edit Animation: \(name)")
             .toolbar {

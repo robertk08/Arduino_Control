@@ -11,6 +11,7 @@ struct MatrixView: View {
     @ObservedObject var storage = MatrixStorage.shared
     @State var index: Int
     @State var showName: Bool = true
+    @State var editable = true
     
     var body: some View {
         GeometryReader { geometry in
@@ -31,12 +32,18 @@ struct MatrixView: View {
                             }
                         }
                     }
-                    if showName {
+                    if showName && editable {
                         TextField("Enter matrix name", text: $storage.matrixes[index].name)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .foregroundStyle(Color.accentColor)
                             .frame(width: 150, alignment: .center)
                             .multilineTextAlignment(.center)
+                    }
+                    if !editable {
+                        Text(storage.matrixes[index].name)
+                            .foregroundStyle(Color.accentColor)
+                            .padding(.leading, 35)
+                            .padding(.top, 5)
                     }
                 }
             } else {
