@@ -21,7 +21,7 @@ class EditMatrixViewModel: ObservableObject {
         if (0..<columns).contains(x), (0..<rows).contains(y) {
             if selectedMatrix.values[y][x] != self.isOn {
                 Haptic.feedback(.selection)
-                let command = ControlCommand(device: "Matrix", action: "changeSingle", position: [x, y, self.isOn ? 1 : 0])
+                //let command = ControlCommand(device: "Matrix", action: "changeSingle", position: [x, y, self.isOn ? 1 : 0])
                 //ConnectionService.sendRequest(command: command, arduinoIP: self.arduinoIP)
             }
             selectedMatrix.values[y][x] = self.isOn

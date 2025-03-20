@@ -47,6 +47,6 @@ struct MatrixView: View {
 }
 
 #Preview {
-    MatrixView(index: 1)
+    MatrixView(index: 0)
         .frame(width: 150)
 }
