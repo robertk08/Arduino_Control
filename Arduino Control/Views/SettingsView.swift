@@ -16,11 +16,8 @@ struct SettingsView: View {
                 Toggle("Show LED Control", isOn: $viewModel.showLEDControl)
                     .tint(.accentColor)
                 TextField("Ip", text: $viewModel.arduinoIP)
-                    .onTapGesture {
-                        Haptic.feedback(.selection)
-                    }
                 Button("Change App Icon") {
-                    Haptic.feedback(.success)
+                    Haptic.feedback(.rigid)
                     viewModel.isIconSelectionViewPresented = true
                 }
             }

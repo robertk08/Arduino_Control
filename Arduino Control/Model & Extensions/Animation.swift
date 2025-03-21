@@ -5,7 +5,7 @@
 //  Created by Robert Krause on 19.03.25.
 //
 
-import SwiftUI
+import Foundation
 
 struct Animation: Identifiable, Codable, Equatable {
     var id: UUID

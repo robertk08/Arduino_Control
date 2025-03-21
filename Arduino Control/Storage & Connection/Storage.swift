@@ -33,7 +33,7 @@ class AnimationStorage: ObservableObject {
     }
 
     init() {
-        animations = UserDefaults.standard.load(forKey: "matrixes")
+        animations = UserDefaults.standard.load(forKey: "animations")
     }
 
     private func save() {

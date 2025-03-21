@@ -8,52 +8,43 @@
 import SwiftUI
 
 struct MatrixView: View {
-    @ObservedObject var storage = MatrixStorage.shared
-    @State var index: Int
-    @State var showName: Bool = true
-    @State var editable = true
-    
+    @Binding var matrix: Matrix
+    var spacing: CGFloat = 2
+    var showName: Bool = true
+    var editable: Bool = true
+
     var body: some View {
         GeometryReader { geometry in
-            if MatrixStorage.shared.matrixes.indices.contains(index) {
-                VStack {
-                    let cellSize = (geometry.size.width - CGFloat(storage.matrixes[index].values[0].count) * 2) /
-                    CGFloat(storage.matrixes[index].values[0].count) + 2 /
-                    CGFloat(storage.matrixes[index].values[0].count)
-                    
-                    VStack(spacing: 2) {
-                        ForEach(0..<storage.matrixes[index].values.count, id: \.self) { row in
-                            HStack(spacing: 2) {
-                                ForEach(0..<storage.matrixes[index].values[0].count, id: \.self) { col in
-                                    RoundedRectangle(cornerRadius: 2)
-                                        .fill(storage.matrixes[index].values[row][col] ? Color.accentColor : Color.secondary)
-                                        .frame(width: cellSize, height: cellSize)
-                                }
+            let columns = matrix.values.first?.count ?? 0
+            let cellSize = (geometry.size.width - CGFloat(2 * columns)) / CGFloat(columns)
+            
+                VStack(spacing: spacing) {
+                    ForEach(matrix.values.indices, id: \.self) { row in
+                        HStack(spacing: spacing) {
+                            ForEach(matrix.values[row].indices, id: \.self) { col in
+                                RoundedRectangle(cornerRadius: spacing)
+                                    .fill(matrix.values[row][col] ? Color.accentColor : Color.secondary)
+                                    .frame(width: cellSize, height: cellSize)
                             }
                         }
                     }
-                    if showName && editable {
-                        TextField("Enter matrix name", text: $storage.matrixes[index].name)
+                if showName {
+                    if editable {
+                        TextField("Enter matrix name", text: $matrix.name)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 150, alignment: .center)
+                            .frame(width: 150)
                             .multilineTextAlignment(.center)
-                    }
-                    if !editable {
-                        Text(storage.matrixes[index].name)
-                            .foregroundStyle(Color.accentColor)
-                            .padding(.leading, 35)
-                            .padding(.top, 5)
+                            .padding(.top, 10)
+                    } else {
+                        Text(matrix.name)
+                            .padding(.top, 15)
                     }
                 }
-            } else {
-                Text("No matrix available")
             }
         }
     }
 }
 
 #Preview {
-    MatrixView(index: 0)
-        .frame(width: 150)
+    MatrixView(matrix: .constant(MatrixStorage.shared.matrixes[0]))
 }

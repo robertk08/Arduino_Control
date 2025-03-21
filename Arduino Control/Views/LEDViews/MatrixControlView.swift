@@ -19,7 +19,7 @@ struct MatrixControlView: View {
         .toolbar {
             toolbarContent
         }
-        .onChange(of: viewModel.selectedMatrix) { _, newValue in
+        .onChange(of: viewModel.selectedMatrix) { _,_ in
             viewModel.updateSelectedMatrix()
         }
     }
@@ -31,6 +31,7 @@ struct MatrixControlView: View {
                     Haptic.feedback(.success)
                     MatrixStorage.shared.matrixes.append(
                         Matrix(id: UUID(), name: "Scene \(MatrixStorage.shared.matrixes.count + 1)", values: viewModel.selectedMatrix.values))
+                    viewModel.selectedMatrix.index = MatrixStorage.shared.matrixes.count - 1
                 } label: {
                     Image(systemName: "plus")
                 }

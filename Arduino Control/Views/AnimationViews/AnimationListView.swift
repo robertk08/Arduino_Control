@@ -43,6 +43,9 @@ struct AnimationListView: View {
                     .buttonStyle(.bordered)
                 }
             }
+            .onAppear {
+                print(AnimationStorage.shared.animations)
+            }
         }
     }
 }

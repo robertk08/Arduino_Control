@@ -8,34 +8,26 @@
 import SwiftUI
 
 struct MatrixListView: View {
+    @ObservedObject var storage = MatrixStorage.shared
+
     var body: some View {
         GeometryReader { geometry in
             List {
-                ForEach((MatrixStorage.shared.matrixes.indices), id: \.self) { index in
-                    HStack{
-                        Text(MatrixStorage.shared.matrixes[index].name)
-                            .multilineTextAlignment(.leading)
+                ForEach($storage.matrixes) { $matrix in
+                    HStack {
+                        Text(matrix.name)
                             .frame(width: geometry.size.width / 4)
-                        VStack(spacing: 0) {
-                            ForEach(0..<MatrixStorage.shared.matrixes[index].values.count, id: \.self) { row in
-                                HStack(spacing: 0) {
-                                    ForEach(0..<MatrixStorage.shared.matrixes[index].values[0].count, id: \.self) { col in
-                                        Rectangle()
-                                            .fill(MatrixStorage.shared.matrixes[index].values[row][col] ? Color.accentColor : Color.secondary)
-                                            .frame(width: 12, height: 12)
-                                    }
-                                }
-                            }
-                        }
+                        MatrixView(matrix: $matrix, spacing: 0, showName: false)
+                            .frame(height: 75)
                     }
                 }
                 .onDelete { indices in
-                    MatrixStorage.shared.matrixes.remove(atOffsets: indices)
                     Haptic.feedback(.success)
+                    storage.matrixes.remove(atOffsets: indices)
                 }
                 .onMove { indices, newOffset in
-                    MatrixStorage.shared.matrixes.move(fromOffsets: indices, toOffset: newOffset)
                     Haptic.feedback(.medium)
+                    storage.matrixes.move(fromOffsets: indices, toOffset: newOffset)
                 }
             }
             .environment(\.editMode, .constant(.active))

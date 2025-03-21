@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 class MatrixOverviewViewModel: ObservableObject {
-    @AppStorage("arduinoIP") var arduinoIP = "192.168.4.1"
     @Published var showListView = false
     @ObservedObject var storage = MatrixStorage.shared
     
@@ -17,8 +16,8 @@ class MatrixOverviewViewModel: ObservableObject {
         var selectedMatrix = selectedMatrix
         selectedMatrix = storage.matrixes[index]
         selectedMatrix.index = index
-        let command = ControlCommand(device: "Matrix", action: "changeAll", matrixValues: selectedMatrix.values)
-        ConnectionService.sendRequest(command: command, arduinoIP: arduinoIP)
+        let command = ControlCommand(device: "Matrix", action: 1, values: selectedMatrix.values.toIntArray())
+        ConnectionService.sendRequest(command: command)
         Haptic.feedback(.selection)
         return selectedMatrix
     }

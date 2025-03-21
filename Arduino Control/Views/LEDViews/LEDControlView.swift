@@ -18,7 +18,7 @@ struct LEDControlView: View {
                 }
                 MatrixControlView()
             }
-            .navigationTitle("Arduino Control")
+            .navigationTitle("LED Control")
         }
     }
 }

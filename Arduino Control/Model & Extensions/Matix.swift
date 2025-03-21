@@ -5,7 +5,7 @@
 //  Created by Robert Krause on 18.03.25.
 //
 
-import SwiftUI
+import Foundation
 
 struct Matrix: Identifiable, Codable, Equatable {
     var id: UUID

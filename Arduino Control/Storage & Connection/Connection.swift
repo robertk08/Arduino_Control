@@ -9,7 +9,8 @@ import Foundation
 import SwiftUI
 
 class ConnectionService {
-    static func sendRequest(command: ControlCommand, arduinoIP: String) {
+    static func sendRequest(command: ControlCommand) {
+        @AppStorage("arduinoIP") var arduinoIP = "192.168.4.1"
         guard let url = URL(string: "http://\(arduinoIP)/control") else { return }
         
         var request = URLRequest(url: url)

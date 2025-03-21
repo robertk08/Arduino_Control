@@ -6,23 +6,20 @@
 //
 
 import Foundation
-import SwiftUI
 
 class EditMatrixViewModel: ObservableObject {
-    @AppStorage("arduinoIP") var arduinoIP = "192.168.4.1"
     @Published var isOn = true
     
-    func updateLedState(selectedMatrix: Matrix, at location: CGPoint, in size: CGSize, columns: Int, rows: Int) -> Matrix {
+    func updateLedState(_ selectedMatrix: Matrix, _ location: CGPoint, _ cellSize: Double, _ columns: Int, _ rows: Int) -> Matrix {
         var selectedMatrix = selectedMatrix
-        let cellSize = (size.width - CGFloat(columns) * 10) / CGFloat(columns) - 10 / CGFloat(columns) + 10
-        let x = Int((location.x - 10) / cellSize)
+        let x = Int(location.x / cellSize)
         let y = Int(location.y / cellSize)
         
         if (0..<columns).contains(x), (0..<rows).contains(y) {
             if selectedMatrix.values[y][x] != self.isOn {
                 Haptic.feedback(.selection)
-                //let command = ControlCommand(device: "Matrix", action: "changeSingle", position: [x, y, self.isOn ? 1 : 0])
-                //ConnectionService.sendRequest(command: command, arduinoIP: self.arduinoIP)
+                let command = ControlCommand(device: "Matrix", action: 0, values: [[x, y, self.isOn ? 1 : 0]])
+                //ConnectionService.sendRequest(command: command)
             }
             selectedMatrix.values[y][x] = self.isOn
         }

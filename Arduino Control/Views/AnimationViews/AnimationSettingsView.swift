@@ -14,22 +14,35 @@ struct AnimationSettingsView: View {
     @State var repeating: Bool
     @State var matrixes: [Matrix]
     @State var showAlert = false
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         NavigationView {
-            VStack {
-                GroupBox {
+            ScrollView {
+                VStack {
                     Text("Animation Details")
-                    TextField("Animation Name", text: $name)
-                    Slider(value: $delay, in: 0...5, step: 0.1) {
-                        Text("Delay: \(String(format: "%.1f", delay)) s")
+                        .font(.headline)
+                        .padding(.top)
+                    GroupBox {
+                        TextField("Animation Name", text: $name)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.top, 10)
+                        Divider()
+                            .padding(.vertical, 10)
+                        Text("Time between scenes: \(delay, specifier: "%.2f")s")
+                        Slider(value: $delay, in: 0.1...5, step: 0.05)
+                        Divider()
+                            .padding(.vertical, 10)
+                        
+                        Toggle("Repeat Animation", isOn: $repeating)
                     }
-                    Toggle("Repeat Animation", isOn: $repeating)
+                    .padding()
+                    Divider()
+                    Text("Select Matrixes")
+                        .font(.headline)
+                        .padding()
+                    SelectMatrixView(matrixes: $matrixes)
                 }
-                .padding()
-                
-                Text("Select Matrixes")
-                SelectMatrixView(matrixes: $matrixes)
             }
             .navigationTitle(isNewAnimation ? "New Animation" : "Edit Animation: \(name)")
             .toolbar {
@@ -38,11 +51,28 @@ struct AnimationSettingsView: View {
                         if !name.isEmpty || !matrixes.isEmpty  {
                             Haptic.feedback(.success)
                             AnimationStorage.shared.animations.append(Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes))
+                            dismiss.callAsFunction()
                         } else {
                             showAlert = true
                             Haptic.feedback(.error)
                         }
                     }
+                    .buttonStyle(.bordered)
+
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        Haptic.feedback(.rigid)
+                        dismiss.callAsFunction()
+                    }
+                    .buttonStyle(.bordered)
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Reset Matrixes") {
+                        matrixes.removeAll()
+                        Haptic.feedback(.success)
+                    }
+                    .buttonStyle(.bordered)
                 }
             }
             .alert("Error", isPresented: $showAlert) {
@@ -50,6 +80,7 @@ struct AnimationSettingsView: View {
             } message: {
                 Text("Animation needs a name and at least one Matrix!")
             }
+            .interactiveDismissDisabled(true)
         }
     }
 }

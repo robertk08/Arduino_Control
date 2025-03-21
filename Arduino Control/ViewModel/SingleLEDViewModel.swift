@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 
 class SingleLEDViewModel: ObservableObject {
-    @AppStorage("arduinoIP") var arduinoIP = "192.168.4.1"
     @Published var isOn = false
     @Published var onDuration: Double = 1.0
     @Published var offDuration: Double = 1.0
@@ -45,7 +44,7 @@ class SingleLEDViewModel: ObservableObject {
     
     func updateLED() {
         Haptic.feedback(.selection)
-        let command = ControlCommand(device: "LED", action: isOn ? "on" : "off")
-        ConnectionService.sendRequest(command: command, arduinoIP: arduinoIP)
+        let command = ControlCommand(device: "LED", action: isOn ? 1 : 0)
+        ConnectionService.sendRequest(command: command)
     }
 }
