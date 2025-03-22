@@ -28,16 +28,19 @@ struct MatrixView: View {
                             }
                         }
                     }
+                    
                 if showName {
                     if editable {
                         TextField("Enter matrix name", text: $matrix.name)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .foregroundStyle(Color.accentColor)
                             .frame(width: 150)
                             .multilineTextAlignment(.center)
                             .padding(.top, 10)
                     } else {
                         Text(matrix.name)
                             .padding(.top, 15)
+                            .foregroundStyle(Color.accentColor)
                     }
                 }
             }

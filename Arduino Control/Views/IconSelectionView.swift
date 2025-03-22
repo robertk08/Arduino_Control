@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct IconSelectionView: View {
-    let icons = ["Chip", "Chip-Wifi", "Chip-Pentagon",  "Chip-Pentagon-Sparkle", "Chip-Pentagon-Wifi", "Memory"]
+    let icons = ["Chip", "Chip-Wifi", "Chip-Pentagon-Sparkle", "Chip-Pentagon-Wifi", "Memory"]
+    @AppStorage("selectedIconIndex") var selectedIconIndex: Int = 0
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -20,26 +21,31 @@ struct IconSelectionView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(icons, id: \.self) { icon in
-                        Button(action: {
-                            Haptic.feedback(.success)
-                            if let index = icons.firstIndex(of: icon) {
+                        if let index = icons.firstIndex(of: icon) {
+                            Button(action: {
+                                Haptic.feedback(.success)
+                                selectedIconIndex = index
                                 let iconName = "AppIcon \(index + 1)"
                                 UIApplication.shared.setAlternateIconName(iconName == "AppIcon 1" ? nil : iconName) { error in
                                     if let error = error {
                                         print("Failed to change app icon: \(error.localizedDescription)")
                                     }
                                 }
+                                   dismiss()
+                                   }) {
+                                VStack {
+                                    Image(icon)
+                                        .resizable()
+                                        .frame(width: 100, height: 100)
+                                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .stroke(Color.accentColor, lineWidth: selectedIconIndex == index ? 4 : 1)
+                                        )
+                                    Text(icon)
+                                }
+                                .padding()
                             }
-                            dismiss()
-                        }) {
-                            VStack {
-                                Image(icon)
-                                    .resizable()
-                                    .frame(width: 100, height: 100)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                                Text(icon)
-                            }
-                            .padding()
                         }
                     }
                 }

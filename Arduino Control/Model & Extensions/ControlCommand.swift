@@ -11,5 +11,4 @@ struct ControlCommand: Codable {
     var device: String
     var action: Int
     var values: [[Int]]?
-   // var matrixValues: [[Bool]]?
 }

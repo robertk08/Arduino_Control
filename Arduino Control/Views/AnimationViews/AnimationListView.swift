@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct AnimationListView: View {
+    @ObservedObject var storage = AnimationStorage.shared
     @State private var isAnimationSettingsViewPresent = false
     
     var body: some View {
         NavigationView {
             List {
-                ForEach(AnimationStorage.shared.animations, id: \ .id) { animation in
-                    Text(animation.name)
+                ForEach(storage.animations.indices, id: \.self) { index in
+                    NavigationLink {
+                        SingleAnimationView(index: index)
+                    } label: {
+                        Text(AnimationStorage.shared.animations[index].name)
+                    }
+
                 }
                 .onDelete { indices in
                     AnimationStorage.shared.animations.remove(atOffsets: indices)

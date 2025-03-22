@@ -14,6 +14,7 @@ struct AnimationSettingsView: View {
     @State var repeating: Bool
     @State var matrixes: [Matrix]
     @State var showAlert = false
+    @State var index: Int = 0
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -23,20 +24,7 @@ struct AnimationSettingsView: View {
                     Text("Animation Details")
                         .font(.headline)
                         .padding(.top)
-                    GroupBox {
-                        TextField("Animation Name", text: $name)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.top, 10)
-                        Divider()
-                            .padding(.vertical, 10)
-                        Text("Time between scenes: \(delay, specifier: "%.2f")s")
-                        Slider(value: $delay, in: 0.1...5, step: 0.05)
-                        Divider()
-                            .padding(.vertical, 10)
-                        
-                        Toggle("Repeat Animation", isOn: $repeating)
-                    }
-                    .padding()
+                    AnimationDetailView(name: $name, delay: $delay, repeating: $repeating)
                     Divider()
                     Text("Select Matrixes")
                         .font(.headline)
@@ -50,7 +38,11 @@ struct AnimationSettingsView: View {
                     Button("Save") {
                         if !name.isEmpty || !matrixes.isEmpty  {
                             Haptic.feedback(.success)
-                            AnimationStorage.shared.animations.append(Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes))
+                            if isNewAnimation {
+                                AnimationStorage.shared.animations.append(Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes))
+                            } else {
+                                AnimationStorage.shared.animations[index] =  Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes)
+                            }
                             dismiss.callAsFunction()
                         } else {
                             showAlert = true
@@ -58,19 +50,22 @@ struct AnimationSettingsView: View {
                         }
                     }
                     .buttonStyle(.bordered)
-
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button {
                         Haptic.feedback(.rigid)
                         dismiss.callAsFunction()
+                    } label: {
+                        Image(systemName: "xmark.square.fill")
                     }
                     .buttonStyle(.bordered)
                 }
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Reset Matrixes") {
-                        matrixes.removeAll()
+                    Button {
                         Haptic.feedback(.success)
+                        matrixes.removeAll()
+                    } label: {
+                        Image(systemName: "arrow.uturn.forward.square.fill")
                     }
                     .buttonStyle(.bordered)
                 }
@@ -88,3 +83,5 @@ struct AnimationSettingsView: View {
 #Preview {
     AnimationSettingsView(isNewAnimation: false, name: "", delay: 0.5, repeating: false, matrixes: [])
 }
+
+
