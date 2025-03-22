@@ -18,23 +18,22 @@ struct AnimationListView: View {
                     NavigationLink {
                         SingleAnimationView(index: index)
                     } label: {
-                        Text(AnimationStorage.shared.animations[index].name)
+                        Text(storage.animations[index].name)
                     }
-
                 }
                 .onDelete { indices in
-                    AnimationStorage.shared.animations.remove(atOffsets: indices)
                     Haptic.feedback(.success)
+                    storage.animations.remove(atOffsets: indices)
                 }
                 .onMove { indices, newOffset in
-                    AnimationStorage.shared.animations.move(fromOffsets: indices, toOffset: newOffset)
                     Haptic.feedback(.medium)
+                    storage.animations.move(fromOffsets: indices, toOffset: newOffset)
                 }
             }
-            .navigationTitle("Animation")
-            .sheet(isPresented: $isAnimationSettingsViewPresent, content: {
-                AnimationSettingsView(isNewAnimation: true, name: "", delay: 0.5, repeating: false, matrixes: [])
-            })
+            .navigationTitle("Animations")
+            .sheet(isPresented: $isAnimationSettingsViewPresent) {
+                AnimationSettingsView(isNewAnimation: true, name: "", delay: 0.5, repeating: true, matrixes: [])
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
@@ -42,15 +41,13 @@ struct AnimationListView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
+                        Haptic.feedback(.selection)
                         isAnimationSettingsViewPresent = true
                     } label: {
                         Image(systemName: "plus")
                     }
                     .buttonStyle(.bordered)
                 }
-            }
-            .onAppear {
-                print(AnimationStorage.shared.animations)
             }
         }
     }

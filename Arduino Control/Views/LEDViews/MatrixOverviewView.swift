@@ -9,64 +9,70 @@ import SwiftUI
 
 struct MatrixOverviewView: View {
     @StateObject private var viewModel = MatrixOverviewViewModel()
+    @ObservedObject var storage1 = MatrixStorage.shared
+    @ObservedObject var storage2 = AnimationStorage.shared
     @Binding var selectedMatrix: Matrix
-    @ObservedObject var storage = MatrixStorage.shared
+    var selection = true
+    var showAnimation = false
+    var animationIndex = 0
+    var matrixBinding: Binding<[Matrix]> { showAnimation ? $storage2.animations[animationIndex].matrixes : $storage1.matrixes }
     
     var body: some View {
         ScrollView(.horizontal) {
             HStack {
-                ForEach($storage.matrixes.indices, id: \.self) { index in
-                    GroupBox {
-                        MatrixView(matrix: $storage.matrixes[index])
-                            .frame(width: 150, height: 135)
-                            .overlay {
-                                if index == selectedMatrix.index {
-                                    RoundedRectangle(cornerRadius: 7)
-                                        .stroke(Color.accentColor, lineWidth: 4)
-                                        .foregroundStyle(Color.accentColor)
-                                        .frame(width: 180, height: 165)
-                                }
-                            }
+                ForEach(matrixBinding.indices, id: \.self) { index in
+                    Button {
+                        if selection {
+                            selectedMatrix = matrixBinding[index].wrappedValue
+                            selectedMatrix.index = index
+                            Haptic.feedback(.selection)
+                        }
+                    } label: {
+                        MatrixView(matrix: matrixBinding[index])
+                            .padding(.top, 10)
+                            .padding(.trailing, 5)
+                            .frame(width: 155, height: 155)
                     }
+                    .buttonStyle(.bordered)
+                    .tint(index == selectedMatrix.index ? .accentColor : .secondary)
+                    .padding(5)
                     .contextMenu {
                         Button("Delete") {
                             Haptic.feedback(.success)
-                            storage.matrixes.remove(at: index)
+                            matrixBinding.wrappedValue.remove(at: index)
+                            if index < (selectedMatrix.index ?? 0) {
+                                selectedMatrix.index = max(0, (selectedMatrix.index ?? 1) - 1)
+                            } else if index == selectedMatrix.index ?? 0 {
+                                selectedMatrix.index = 0
+                            }
                         }
                     }
-                    .onTapGesture {
-                        selectedMatrix = storage.matrixes[index]
-                        selectedMatrix.index = index
-                        Haptic.feedback(.selection)
-                    }
-                    .padding(10)
-
                 }
-                GroupBox {
-                    Button(action: {
-                        viewModel.showListView = true
-                    }, label: {
-                        VStack {
-                            Image(systemName: "ellipsis")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80)
-                        }
-                        .frame(width: 120, height: 120)
-                    })
-                    .tint(.accentColor)
-                    .buttonStyle(.bordered)
-                    .frame(width: 150, height: 135)
-                }
-                .padding(10)
+                buttonView
             }
             .sheet(isPresented: $viewModel.showListView) {
-                MatrixListView()
+                MatrixListView(showAnimation: showAnimation, animationIndex: animationIndex)
             }
             .onChange(of: selectedMatrix) { _,_ in
                 viewModel.updateSelectedMatrix(selectedMatrix)
             }
         }
+    }
+    
+    var buttonView: some View {
+        Button(action: {
+            viewModel.showListView = true
+        }, label: {
+            VStack {
+                Image(systemName: "ellipsis")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 80)
+            }
+            .frame(width: 155, height: 155)
+        })
+        .buttonStyle(.bordered)
+        .tint(.accentColor)
     }
 }
 

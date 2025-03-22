@@ -12,7 +12,7 @@ struct SingleAnimationView: View {
     @State var index: Int
     @State var isPlaying = false
     @State var showSettingsView = false
-    @State var currentMatrixIndex = 0
+    @State var selectedMatrix = AnimationStorage.shared.animations[0].matrixes[0]
     
     var body: some View {
         GeometryReader { geometry in
@@ -21,11 +21,11 @@ struct SingleAnimationView: View {
                     ScrollView {
                         VStack {
                             AnimationDetailView(name: $storage.animations[index].name, delay: $storage.animations[index].delay, repeating: $storage.animations[index].repeating)
-                            MatrixView(matrix: $storage.animations[index].matrixes[0], spacing: 5, editable: false)
+                            MatrixView(matrix: $selectedMatrix, spacing: 5, editable: false)
                                 .padding(.trailing, 30)
                                 .padding(10)
                                 .frame(height: 290)
-                            MatrixOverviewView(selectedMatrix: $storage.animations[index].matrixes[currentMatrixIndex])
+                            MatrixOverviewView(selectedMatrix: $selectedMatrix, selection: false, showAnimation: true, animationIndex: index)
                             Spacer()
                                 .frame(height: 100)
                         }
@@ -39,7 +39,6 @@ struct SingleAnimationView: View {
                             Image(systemName: "gearshape.fill")
                         }
                         .buttonStyle(.bordered)
-                        .position(x: 200, y: 0)
                     }
                     .sheet(isPresented: $showSettingsView) {
                         AnimationSettingsView(isNewAnimation: false, name: storage.animations[index].name, delay: storage.animations[index].delay, repeating: storage.animations[index].repeating, matrixes: storage.animations[index].matrixes)
@@ -62,8 +61,11 @@ struct SingleAnimationView: View {
                 .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             }
         }
+        .onAppear() {
+            selectedMatrix.index = 0
+        }
     }
-    }
+}
 
 #Preview {
     SingleAnimationView(index: 0)
