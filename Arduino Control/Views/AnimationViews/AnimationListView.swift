@@ -29,6 +29,10 @@ struct AnimationListView: View {
                     Haptic.feedback(.medium)
                     storage.animations.move(fromOffsets: indices, toOffset: newOffset)
                 }
+                if storage.animations.isEmpty {
+                    Text("No animations.  \nAdd animation by tapping the + button in the top right corner.")
+                        .font(.title2)
+                }
             }
             .navigationTitle("Animations")
             .sheet(isPresented: $isAnimationSettingsViewPresent) {
