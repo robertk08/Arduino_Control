@@ -36,8 +36,7 @@ struct MatrixOverviewView: View {
                         }
                     }
                     .onTapGesture {
-                        Haptic.feedback(.selection)
-                        selectedMatrix = viewModel.newSelectedMatrix(selectedMatrix, index: index)
+                        viewModel.newSelectedMatrix(&selectedMatrix, newSelectedMatrix: storage.matrixes[index], index: index)
                     }
                 }
                 GroupBox {
