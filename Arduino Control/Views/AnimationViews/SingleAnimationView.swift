@@ -15,45 +15,40 @@ struct SingleAnimationView: View {
     @State var currentMatrixIndex = 0
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack {
-                    AnimationDetailView(name: $storage.animations[index].name, delay: $storage.animations[index].delay, repeating: $storage.animations[index].repeating)
-                    MatrixView(matrix: $storage.animations[index].matrixes[0], spacing: 5, editable: false)
-                        .padding(.trailing, 30)
-                        .padding(10)
-                    ScrollView(.horizontal) {
-                        HStack {
-                            ForEach($storage.animations[index].matrixes.indices, id: \.self) { matrixIndex in
-                                GroupBox {
-                                    MatrixView(matrix: $storage.animations[index].matrixes[matrixIndex])
-                                        .frame(width: 150, height: 135)
-                                        .overlay {
-                                            if matrixIndex == currentMatrixIndex {
-                                                RoundedRectangle(cornerRadius: 7)
-                                                    .stroke(Color.accentColor, lineWidth: 4)
-                                                    .foregroundStyle(Color.accentColor)
-                                                    .frame(width: 180, height: 165)
-                                            }
-                                        }
-                                }
-                                .contextMenu {
-                                    Button("Delete") {
-                                        Haptic.feedback(.success)
-                                        if !(storage.animations[index].matrixes.count == 1) {
-                                            storage.animations[index].matrixes.remove(at: matrixIndex)
-                                        }
-                                    }
-                                }
-                            }
+        GeometryReader { geometry in
+            ZStack {
+                NavigationView {
+                    ScrollView {
+                        VStack {
+                            AnimationDetailView(name: $storage.animations[index].name, delay: $storage.animations[index].delay, repeating: $storage.animations[index].repeating)
+                            MatrixView(matrix: $storage.animations[index].matrixes[0], spacing: 5, editable: false)
+                                .padding(.trailing, 30)
+                                .padding(10)
+                                .frame(height: 290)
+                            MatrixOverviewView(selectedMatrix: $storage.animations[index].matrixes[currentMatrixIndex])
+                            Spacer()
+                                .frame(height: 100)
                         }
                     }
+                    .padding()
+                    .navigationTitle(storage.animations[index].name)
+                    .toolbar {
+                        Button {
+                            showSettingsView = true
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                        }
+                        .buttonStyle(.bordered)
+                        .position(x: 200, y: 0)
+                    }
+                    .sheet(isPresented: $showSettingsView) {
+                        AnimationSettingsView(isNewAnimation: false, name: storage.animations[index].name, delay: storage.animations[index].delay, repeating: storage.animations[index].repeating, matrixes: storage.animations[index].matrixes)
+                    }
                 }
-            }
-                .padding()
-                Spacer()
+                
                 Button {
                     isPlaying.toggle()
+                    
                 } label: {
                     VStack {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
@@ -64,23 +59,27 @@ struct SingleAnimationView: View {
                     .frame(width: 90, height: 90)
                 }
                 .buttonStyle(.borderedProminent)
-
+                .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             }
-            .navigationTitle(storage.animations[index].name)
-            .toolbar {
-                Button {
-                    showSettingsView = true
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                }
-                .buttonStyle(.bordered)
-            }
-            .sheet(isPresented: $showSettingsView) {
-                AnimationSettingsView(isNewAnimation: false, name: storage.animations[index].name, delay: storage.animations[index].delay, repeating: storage.animations[index].repeating, matrixes: storage.animations[index].matrixes)
-            }
+        }
     }
-}
+    }
 
 #Preview {
     SingleAnimationView(index: 0)
+}
+
+class MatrixOverviewViewModel2: ObservableObject {
+    @Published var showListView = false
+    @Published var sendCommandTimer: Timer? = nil
+    
+    func updateSelectedMatrix(_ selectedMatrix: Matrix) {
+        if sendCommandTimer == nil {
+            sendCommandTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
+                let command = ControlCommand(device: "Matrix", action: 1, values: selectedMatrix.values.toIntArray())
+                ConnectionService.sendRequest(command: command)
+                self.sendCommandTimer = nil
+            }
+        }
+    }
 }

@@ -8,20 +8,16 @@
 import SwiftUI
 
 struct MatrixControlView: View {
-    @StateObject private var viewModel = MatrixControlViewModel()
+    @State var selectedMatrix = MatrixStorage.shared.matrixes.first!
     
     var body: some View {
         VStack {
-            EditMatrixView(selectedMatrix: $viewModel.selectedMatrix)
+            EditMatrixView(selectedMatrix: $selectedMatrix)
             Divider()
-            MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix)
+            MatrixOverviewView(selectedMatrix: $selectedMatrix)
         }
-        .toolbar {
-            toolbarContent
-        }
-        .onChange(of: viewModel.selectedMatrix) { _,_ in
-            viewModel.updateSelectedMatrix()
-        }
+        .toolbar { toolbarContent }
+        .onAppear { selectedMatrix.index = 0 }
     }
     
     var toolbarContent: some ToolbarContent {
@@ -30,8 +26,8 @@ struct MatrixControlView: View {
                 Button {
                     Haptic.feedback(.success)
                     MatrixStorage.shared.matrixes.append(
-                        Matrix(id: UUID(), name: "Scene \(MatrixStorage.shared.matrixes.count + 1)", values: viewModel.selectedMatrix.values))
-                    viewModel.selectedMatrix.index = MatrixStorage.shared.matrixes.count - 1
+                        Matrix(id: UUID(), name: "Scene \(MatrixStorage.shared.matrixes.count + 1)", values: selectedMatrix.values))
+                    selectedMatrix.index = MatrixStorage.shared.matrixes.count - 1
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -41,7 +37,7 @@ struct MatrixControlView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     Haptic.feedback(.success)
-                    MatrixStorage.shared.matrixes[viewModel.selectedMatrix.index ?? 0] = viewModel.selectedMatrix
+                    MatrixStorage.shared.matrixes[selectedMatrix.index ?? 0] = selectedMatrix
                 } label: {
                     Image(systemName: "pencil")
                 }

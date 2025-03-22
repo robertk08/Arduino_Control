@@ -16,14 +16,12 @@ struct AnimationDetailView: View {
         GroupBox {
             TextField("Animation Name", text: $name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.top, 10)
             Divider()
-                .padding(.vertical, 10)
+                .padding(.vertical, 5)
             Text("Time between scenes: \(delay, specifier: "%.2f")s")
             Slider(value: $delay, in: 0.1...5, step: 0.05)
             Divider()
-                .padding(.vertical, 10)
-            
+                .padding(.vertical, 5)
             Toggle("Repeat Animation", isOn: $repeating)
                 .tint(Color.accentColor)
         }

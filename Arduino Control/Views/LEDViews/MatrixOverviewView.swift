@@ -28,7 +28,6 @@ struct MatrixOverviewView: View {
                                 }
                             }
                     }
-                    .padding(10)
                     .contextMenu {
                         Button("Delete") {
                             Haptic.feedback(.success)
@@ -36,8 +35,12 @@ struct MatrixOverviewView: View {
                         }
                     }
                     .onTapGesture {
-                        viewModel.newSelectedMatrix(&selectedMatrix, newSelectedMatrix: storage.matrixes[index], index: index)
+                        selectedMatrix = storage.matrixes[index]
+                        selectedMatrix.index = index
+                        Haptic.feedback(.selection)
                     }
+                    .padding(10)
+
                 }
                 GroupBox {
                     Button(action: {
@@ -59,6 +62,9 @@ struct MatrixOverviewView: View {
             }
             .sheet(isPresented: $viewModel.showListView) {
                 MatrixListView()
+            }
+            .onChange(of: selectedMatrix) { _,_ in
+                viewModel.updateSelectedMatrix(selectedMatrix)
             }
         }
     }

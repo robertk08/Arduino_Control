@@ -19,7 +19,7 @@ class EditMatrixViewModel: ObservableObject {
             if selectedMatrix.values[y][x] != self.isOn {
                 Haptic.feedback(.selection)
                 let command = ControlCommand(device: "Matrix", action: 0, values: [[x, y, self.isOn ? 1 : 0]])
-                //ConnectionService.sendRequest(command: command)
+                ConnectionService.sendRequest(command: command)
             }
             selectedMatrix.values[y][x] = self.isOn
         }

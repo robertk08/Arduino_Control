@@ -10,40 +10,28 @@ import SwiftUI
 struct SelectMatrixView: View {
     @ObservedObject var storage = MatrixStorage.shared
     @Binding var matrixes: [Matrix]
-    let columns: [GridItem] = [GridItem(.adaptive(minimum: 150))]
     
     var body: some View {
-            LazyVGrid(columns: columns, spacing: 15) {
-                ForEach(MatrixStorage.shared.matrixes.indices, id: \.self) { index in
-                    let active = matrixes.contains(MatrixStorage.shared.matrixes[index])
-                    MatrixView(matrix: $storage.matrixes[index], editable: false)
-                        .grayscale(active ? 0 : 0.7)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical)
-                        .frame(height: 165)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 180)
-                        )
-                        .overlay(
-                            Image(systemName: active ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(active ? Color.accentColor : .primary)
-                                .font(.title)
-                                .offset(x: 20, y: -5),
-                            alignment: .bottomLeading
-                        )
-                        .onTapGesture {
-                            Haptic.feedback(.selection)
-                            if active {
-                                matrixes.removeAll { $0 == MatrixStorage.shared.matrixes[index] }
-                            } else {
-                                matrixes.append(MatrixStorage.shared.matrixes[index])
-                            }
-                        }
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))], spacing: 15) {
+            ForEach($storage.matrixes, id: \.id) { $matrix in
+                let active = matrixes.contains(matrix)
+                Button {
+                    Haptic.feedback(.selection)
+                    if active {
+                        matrixes.removeAll { $0 == matrix }
+                    } else {
+                        matrixes.append(matrix)
+                    }
+                } label: {
+                    MatrixView(matrix: $matrix, editable: false)
+                        .padding(.top, 10)
+                        .frame(height: 150)
                 }
+                .buttonStyle(.bordered)
+                .tint(active ? .accentColor : .secondary)
+                .padding(.horizontal, 3)
             }
-            .padding(.horizontal)
+        }
     }
 }
 

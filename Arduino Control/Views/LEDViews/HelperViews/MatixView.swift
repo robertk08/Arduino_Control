@@ -18,31 +18,30 @@ struct MatrixView: View {
             let columns = matrix.values.first?.count ?? 0
             let cellSize = (geometry.size.width - CGFloat(2 * columns)) / CGFloat(columns)
             
-                VStack(spacing: spacing) {
-                    ForEach(matrix.values.indices, id: \.self) { row in
-                        HStack(spacing: spacing) {
-                            ForEach(matrix.values[row].indices, id: \.self) { col in
-                                RoundedRectangle(cornerRadius: spacing)
-                                    .fill(matrix.values[row][col] ? Color.accentColor : Color.secondary)
-                                    .frame(width: cellSize, height: cellSize)
-                            }
+            VStack(spacing: spacing) {
+                ForEach(matrix.values.indices, id: \.self) { row in
+                    HStack(spacing: spacing) {
+                        ForEach(matrix.values[row].indices, id: \.self) { col in
+                            RoundedRectangle(cornerRadius: spacing)
+                                .fill(matrix.values[row][col] ? Color.accentColor : Color.secondary)
+                                .frame(width: cellSize, height: cellSize)
                         }
                     }
-                    
-                if showName {
-                    if editable {
-                        TextField("Enter matrix name", text: $matrix.name)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .foregroundStyle(Color.accentColor)
-                            .frame(width: 150)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 10)
-                    } else {
-                        Text(matrix.name)
-                            .padding(.top, 15)
-                            .foregroundStyle(Color.accentColor)
+                }
+                VStack {
+                    if showName {
+                        if editable {
+                            TextField("Enter matrix name", text: $matrix.name)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 150)
+                                .multilineTextAlignment(.center)
+                        } else {
+                            Text(matrix.name)
+                        }
                     }
                 }
+                .foregroundStyle(Color.accentColor)
+                .padding(.top, 10)
             }
         }
     }
