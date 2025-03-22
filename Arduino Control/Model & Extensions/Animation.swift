@@ -10,7 +10,7 @@ import Foundation
 struct Animation: Identifiable, Codable, Equatable {
     var id: UUID
     var name: String
-    var delay: Double
+    var delay: TimeInterval
     var repeating: Bool
     var matrixes: [Matrix]
 }

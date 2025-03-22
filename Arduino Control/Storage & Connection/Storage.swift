@@ -9,9 +9,7 @@ import Foundation
 
 class MatrixStorage: ObservableObject {
     static let shared = MatrixStorage()
-    @Published var matrixes: [Matrix] {
-        didSet { save() }
-    }
+    @Published var matrixes: [Matrix] { didSet { save() } }
 
     init() {
         matrixes = UserDefaults.standard.load(forKey: "matrixes")
@@ -28,9 +26,8 @@ class MatrixStorage: ObservableObject {
 
 class AnimationStorage: ObservableObject {
     static let shared = AnimationStorage()
-    @Published var animations: [Animation] {
-        didSet { save() }
-    }
+    @Published var animations: [Animation] { didSet { save() } }
+    @Published var emthyMatrix: Matrix = Matrix(id: UUID(), name: "", values: Array(repeating: Array(repeating: false, count: 12), count: 8))
 
     init() {
         animations = UserDefaults.standard.load(forKey: "animations")

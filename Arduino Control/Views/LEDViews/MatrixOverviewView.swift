@@ -34,7 +34,10 @@ struct MatrixOverviewView: View {
                             .frame(width: 155, height: 155)
                     }
                     .buttonStyle(.bordered)
-                    .tint(index == selectedMatrix.index ? .accentColor : .secondary)
+                    .background {
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(index == selectedMatrix.index ? Color.accentColor.opacity(0.75) : .secondary.opacity(0.2))
+                    }
                     .padding(5)
                     .contextMenu {
                         Button("Delete") {

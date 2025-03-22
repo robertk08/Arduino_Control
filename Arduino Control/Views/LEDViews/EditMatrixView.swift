@@ -24,7 +24,7 @@ struct EditMatrixView: View {
                             HStack(spacing: 5) {
                                 ForEach(0..<columns, id: \.self) { col in
                                     RoundedRectangle(cornerRadius: 5)
-                                        .fill(selectedMatrix.values[row][col] ? Color.accentColor : Color.secondary)
+                                        .fill(selectedMatrix.values[row][col] ? Color.accentColor : Color.primary)
                                         .frame(width: cellSize, height: cellSize)
                                 }
                             }

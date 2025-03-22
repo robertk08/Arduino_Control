@@ -23,7 +23,7 @@ struct MatrixView: View {
                     HStack(spacing: spacing) {
                         ForEach(matrix.values[row].indices, id: \.self) { col in
                             RoundedRectangle(cornerRadius: spacing)
-                                .fill(matrix.values[row][col] ? Color.accentColor : Color.secondary)
+                                .fill(matrix.values[row][col] ? Color.accentColor : Color.primary)
                                 .frame(width: cellSize, height: cellSize)
                         }
                     }

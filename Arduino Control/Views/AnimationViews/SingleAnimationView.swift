@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct SingleAnimationView: View {
+    @StateObject private var viewModel = SingleAnimationViewModel()
     @ObservedObject var storage = AnimationStorage.shared
     @State var index: Int
-    @State var isPlaying = false
-    @State var showSettingsView = false
-    @State var selectedMatrix = AnimationStorage.shared.animations[0].matrixes[0]
     
     var body: some View {
         GeometryReader { geometry in
@@ -21,39 +19,36 @@ struct SingleAnimationView: View {
                     ScrollView {
                         VStack {
                             AnimationDetailView(name: $storage.animations[index].name, delay: $storage.animations[index].delay, repeating: $storage.animations[index].repeating)
-                            MatrixView(matrix: $selectedMatrix, spacing: 5, editable: false)
+                            MatrixView(matrix: $viewModel.selectedMatrix, spacing: 3, editable: false)
                                 .padding(.trailing, 30)
                                 .padding(10)
-                                .frame(height: 290)
-                            MatrixOverviewView(selectedMatrix: $selectedMatrix, selection: false, showAnimation: true, animationIndex: index)
+                                .frame(height: geometry.size.width / 12 * 8 + 20)
+                            MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, selection: false, showAnimation: true, animationIndex: index)
                             Spacer()
-                                .frame(height: 100)
+                                .frame(height: 110)
                         }
                     }
-                    .padding()
                     .navigationTitle(storage.animations[index].name)
                     .toolbar {
                         Button {
-                            showSettingsView = true
+                            viewModel.showSettingsView = true
                         } label: {
                             Image(systemName: "gearshape.fill")
                         }
                         .buttonStyle(.bordered)
                     }
-                    .sheet(isPresented: $showSettingsView) {
+                    .sheet(isPresented: $viewModel.showSettingsView) {
                         AnimationSettingsView(isNewAnimation: false, name: storage.animations[index].name, delay: storage.animations[index].delay, repeating: storage.animations[index].repeating, matrixes: storage.animations[index].matrixes)
                     }
                 }
-                
                 Button {
-                    isPlaying.toggle()
-                    
+                    viewModel.runAnimation(index)
                 } label: {
                     VStack {
-                        Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                        Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
                             .resizable()
                             .scaledToFit()
-                            .frame(width: 60, height: 60)
+                            .frame(width: 60)
                     }
                     .frame(width: 90, height: 90)
                 }
@@ -61,27 +56,9 @@ struct SingleAnimationView: View {
                 .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
             }
         }
-        .onAppear() {
-            selectedMatrix.index = 0
-        }
     }
 }
 
 #Preview {
     SingleAnimationView(index: 0)
-}
-
-class MatrixOverviewViewModel2: ObservableObject {
-    @Published var showListView = false
-    @Published var sendCommandTimer: Timer? = nil
-    
-    func updateSelectedMatrix(_ selectedMatrix: Matrix) {
-        if sendCommandTimer == nil {
-            sendCommandTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
-                let command = ControlCommand(device: "Matrix", action: 1, values: selectedMatrix.values.toIntArray())
-                ConnectionService.sendRequest(command: command)
-                self.sendCommandTimer = nil
-            }
-        }
-    }
 }
