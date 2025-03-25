@@ -25,7 +25,7 @@ struct SingleAnimationView: View {
                                 .frame(height: geometry.size.width / 12 * 8 + 20)
                             MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, selection: false, showAnimation: true, animationIndex: index)
                             Spacer()
-                                .frame(height: 110)
+                                .frame(height: 130)
                         }
                     }
                     .navigationTitle(storage.animations[index].name)
@@ -50,10 +50,10 @@ struct SingleAnimationView: View {
                             .scaledToFit()
                             .frame(width: 60)
                     }
-                    .frame(width: 90, height: 90)
+                    .frame(width: 80, height: 80)
                 }
                 .buttonStyle(.borderedProminent)
-                .position(x: geometry.size.width / 2, y: geometry.size.height - 50)
+                .position(x: geometry.size.width / 2, y: geometry.size.height - 80)
             }
         }
     }
