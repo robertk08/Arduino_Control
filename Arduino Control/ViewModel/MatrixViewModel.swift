@@ -1,21 +1,21 @@
 //
-//  EditMatrixViewModel.swift
+//  MatrixViewModel.swift
 //  Arduino Control
 //
 //  Created by Robert Krause on 19.03.25.
 //
 
 import Foundation
+import SwiftUI
 
-class EditMatrixViewModel: ObservableObject {
-    @Published var isOn = true
+class MatrixViewModel: ObservableObject {
+    @AppStorage("isOn") var isOn = true
     
-    func updateLedState(_ selectedMatrix: Matrix, _ location: CGPoint, _ cellSize: Double, _ columns: Int, _ rows: Int) -> Matrix {
-        var selectedMatrix = selectedMatrix
+    func updateLedState(_ selectedMatrix: inout Matrix, _ location: CGPoint, _ cellSize: Double) {
         let x = Int(location.x / cellSize)
         let y = Int(location.y / cellSize)
         
-        if (0..<columns).contains(x), (0..<rows).contains(y) {
+        if (0..<12).contains(x), (0..<8).contains(y) {
             if selectedMatrix.values[y][x] != self.isOn {
                 Haptic.feedback(.selection)
                 let command = ControlCommand(device: "Matrix", action: 0, values: [[x, y, self.isOn ? 1 : 0]])
@@ -23,6 +23,5 @@ class EditMatrixViewModel: ObservableObject {
             }
             selectedMatrix.values[y][x] = self.isOn
         }
-        return selectedMatrix
     }
 }

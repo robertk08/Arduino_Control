@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MatrixView: View {
+    @StateObject private var viewModel = MatrixViewModel()
     @Binding var matrix: Matrix
     var spacing: CGFloat = 2
     var showName: Bool = true
@@ -43,6 +44,12 @@ struct MatrixView: View {
                 .foregroundStyle(Color.accentColor)
                 .padding(.top, 10)
             }
+            .gesture(DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        if !editable { return }
+                        viewModel.updateLedState(&matrix, value.location, cellSize + spacing)
+                    }
+            )
         }
     }
 }
