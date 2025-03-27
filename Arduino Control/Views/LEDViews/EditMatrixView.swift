@@ -15,10 +15,10 @@ struct EditMatrixView: View {
     var body: some View {
         GroupBox {
             selection
-            MatrixView(matrix: $selectedMatrix, spacing: 5, showName: showName, editable: false)
+            MatrixView(matrix: $selectedMatrix, spacing: 5, showName: showName, matrixEditable: true, nameEditable: false)
                 .padding(.trailing, 30)
         }
-        .frame(height: 345)
+        .frame(height: showName ? 370 : 345)
         .padding(10)
     }
     

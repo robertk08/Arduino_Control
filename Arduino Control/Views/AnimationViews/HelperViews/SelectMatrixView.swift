@@ -23,7 +23,7 @@ struct SelectMatrixView: View {
                         matrixes.append(matrix)
                     }
                 } label: {
-                    MatrixView(matrix: $matrix, editable: false)
+                    MatrixView(matrix: $matrix, nameEditable: false)
                         .padding(.top, 10)
                         .frame(height: 150)
                 }

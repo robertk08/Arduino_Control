@@ -10,6 +10,7 @@ import SwiftUI
 struct SingleAnimationView: View {
     @StateObject private var viewModel = SingleAnimationViewModel()
     @ObservedObject var storage = AnimationStorage.shared
+    @Binding var animation: Animation
     @State var index: Int
     
     var body: some View {
@@ -17,20 +18,18 @@ struct SingleAnimationView: View {
             ZStack {
                 NavigationView {
                     ScrollView {
-                        VStack {
-                            AnimationDetailView(animation: $storage.animations[index])
+                            AnimationDetailView(animation: $animation)
                             EditMatrixView(selectedMatrix: $viewModel.selectedMatrix, showName: true)
                             MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, showAnimation: true, animationIndex: index)
                             Spacer()
                                 .frame(height: 130)
+                    }
+                    .navigationTitle(animation.name)
+                    .onChange(of: viewModel.selectedMatrix) { _, newValue in
+                        if let selectedMatrixIndex = newValue.index, selectedMatrixIndex > -1 {
+                            animation.matrixes[selectedMatrixIndex] = newValue
                         }
                     }
-                    .onChange(of: viewModel.selectedMatrix) { oldValue, newValue in
-                        if let selectedMatrixIndex = newValue.index {
-                            storage.animations[index].matrixes[selectedMatrixIndex] = newValue
-                        }
-                    }
-                    .navigationTitle(storage.animations[index].name)
                     .toolbar {
                         Button {
                             viewModel.showSettingsView = true
@@ -40,11 +39,11 @@ struct SingleAnimationView: View {
                         .buttonStyle(.bordered)
                     }
                     .sheet(isPresented: $viewModel.showSettingsView) {
-                        AnimationSettingsView(isNewAnimation: false, index: index, animation: storage.animations[index])
+                        AnimationSettingsView(isNewAnimation: false, index: index, animation: animation)
                     }
                 }
                 Button {
-                    viewModel.runAnimation(storage.animations[index])
+                    viewModel.runAnimation(animation)
                 } label: {
                     VStack {
                         Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
@@ -62,5 +61,5 @@ struct SingleAnimationView: View {
 }
 
 #Preview {
-    SingleAnimationView(index: 0)
+    SingleAnimationView(animation: .constant(Animation()), index: 0)
 }

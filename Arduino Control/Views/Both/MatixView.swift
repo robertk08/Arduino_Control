@@ -12,7 +12,8 @@ struct MatrixView: View {
     @Binding var matrix: Matrix
     var spacing: CGFloat = 2
     var showName: Bool = true
-    var editable: Bool = true
+    var matrixEditable: Bool = false
+    var nameEditable: Bool = true
 
     var body: some View {
         GeometryReader { geometry in
@@ -24,14 +25,14 @@ struct MatrixView: View {
                     HStack(spacing: spacing) {
                         ForEach(matrix.values[row].indices, id: \.self) { col in
                             RoundedRectangle(cornerRadius: spacing)
-                                .fill(matrix.values[row][col] ? Color.accentColor : Color.primary)
+                                .fill(matrix.values[row][col] ? Color.accentColor : Color.gray)
                                 .frame(width: cellSize, height: cellSize)
                         }
                     }
                 }
                 VStack {
                     if showName {
-                        if editable {
+                        if nameEditable {
                             TextField("Enter matrix name", text: $matrix.name)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .frame(width: 150)
@@ -44,11 +45,12 @@ struct MatrixView: View {
                 .foregroundStyle(Color.accentColor)
                 .padding(.top, 10)
             }
-            .gesture(DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        if !editable { return }
-                        viewModel.updateLedState(&matrix, value.location, cellSize + spacing)
-                    }
+            .gesture(
+                matrixEditable ?
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            viewModel.updateLedState(&matrix, value.location, cellSize + spacing)
+                        } : nil
             )
         }
     }

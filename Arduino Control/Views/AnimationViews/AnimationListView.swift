@@ -16,7 +16,7 @@ struct AnimationListView: View {
             List {
                 ForEach(storage.animations.indices, id: \.self) { index in
                     NavigationLink {
-                        SingleAnimationView(index: index)
+                        SingleAnimationView(animation: $storage.animations[index], index: index)
                     } label: {
                         Text(storage.animations[index].name)
                     }
