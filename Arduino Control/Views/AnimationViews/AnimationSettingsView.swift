@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct AnimationSettingsView: View {
-    @State var isNewAnimation: Bool
-    @State var name: String
-    @State var delay: Double
-    @State var repeating: Bool
-    @State var matrixes: [Matrix]
-    @State var showAlert = false
-    @State var index: Int = 0
+    @StateObject private var viewModel = AnimationSettingsViewModel()
     @Environment(\.dismiss) var dismiss
+    @State var isNewAnimation: Bool
+    @State var index: Int = 0
+    @State var animation: Animation
     
     var body: some View {
         NavigationView {
@@ -24,16 +21,16 @@ struct AnimationSettingsView: View {
                     .font(.headline)
                     .padding(.top)
                     .underline()
-                AnimationDetailView(name: $name, delay: $delay, repeating: $repeating)
+                AnimationDetailView(animation: $animation)
                 Text("Select Matrixes")
                     .font(.headline)
                     .padding(.bottom)
                     .underline()
-                SelectMatrixView(matrixes: $matrixes)
+                SelectMatrixView(matrixes: $animation.matrixes)
             }
-            .navigationTitle(isNewAnimation ? "New Animation" : "Edit: \(name)")
+            .navigationTitle(isNewAnimation ? "New Animation" : "Edit: \(animation.name)")
             .toolbar { toolbarContent }
-            .alert("Error", isPresented: $showAlert) {
+            .alert("Error", isPresented: $viewModel.showAlert) {
                 Button("OK", role: .cancel) { }
             } message: { Text("Animation needs a name and at least one Matrix.") }
         }
@@ -44,27 +41,17 @@ struct AnimationSettingsView: View {
         Group {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    if !(name.isEmpty || matrixes.isEmpty)  {
-                        Haptic.feedback(.success)
-                        if isNewAnimation {
-                            AnimationStorage.shared.animations.append(Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes))
-                        } else {
-                            AnimationStorage.shared.animations[index] = Animation(id: UUID(), name: name, delay: delay, repeating: repeating, matrixes: matrixes)
-                        }
-                        dismiss.callAsFunction()
-                    } else {
-                        showAlert = true
-                        Haptic.feedback(.error)
-                    }
+                    if viewModel.save(animation: animation, index: index, isNewAnimation: isNewAnimation) { dismiss() }
                 } label: {
                     Image(systemName: isNewAnimation ? "plus" : "pencil")
                 }
                 .buttonStyle(.bordered)
             }
+            
             ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     Haptic.feedback(.rigid)
-                    dismiss.callAsFunction()
+                    dismiss()
                 } label: {
                     Image(systemName: "xmark")
                 }
@@ -72,7 +59,7 @@ struct AnimationSettingsView: View {
                 
                 Button {
                     Haptic.feedback(.success)
-                    matrixes.removeAll()
+                    animation.matrixes.removeAll()
                 } label: {
                     Image(systemName: "gobackward")
                 }
@@ -83,5 +70,5 @@ struct AnimationSettingsView: View {
 }
 
 #Preview {
-    AnimationSettingsView(isNewAnimation: false, name: "", delay: 0.5, repeating: false, matrixes: [])
+    AnimationSettingsView(isNewAnimation: false, index: 0, animation: Animation())
 }

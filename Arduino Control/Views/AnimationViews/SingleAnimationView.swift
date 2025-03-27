@@ -18,14 +18,16 @@ struct SingleAnimationView: View {
                 NavigationView {
                     ScrollView {
                         VStack {
-                            AnimationDetailView(name: $storage.animations[index].name, delay: $storage.animations[index].delay, repeating: $storage.animations[index].repeating)
-                            MatrixView(matrix: $viewModel.selectedMatrix, spacing: 3, editable: false)
-                                .padding(.trailing, 30)
-                                .padding(10)
-                                .frame(height: geometry.size.width / 12 * 8 + 20)
-                            MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, selection: false, showAnimation: true, animationIndex: index)
+                            AnimationDetailView(animation: $storage.animations[index])
+                            EditMatrixView(selectedMatrix: $viewModel.selectedMatrix, showName: true)
+                            MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, showAnimation: true, animationIndex: index)
                             Spacer()
                                 .frame(height: 130)
+                        }
+                    }
+                    .onChange(of: viewModel.selectedMatrix) { oldValue, newValue in
+                        if let selectedMatrixIndex = newValue.index {
+                            storage.animations[index].matrixes[selectedMatrixIndex] = newValue
                         }
                     }
                     .navigationTitle(storage.animations[index].name)
@@ -38,11 +40,11 @@ struct SingleAnimationView: View {
                         .buttonStyle(.bordered)
                     }
                     .sheet(isPresented: $viewModel.showSettingsView) {
-                        AnimationSettingsView(isNewAnimation: false, name: storage.animations[index].name, delay: storage.animations[index].delay, repeating: storage.animations[index].repeating, matrixes: storage.animations[index].matrixes)
+                        AnimationSettingsView(isNewAnimation: false, index: index, animation: storage.animations[index])
                     }
                 }
                 Button {
-                    viewModel.runAnimation(index)
+                    viewModel.runAnimation(storage.animations[index])
                 } label: {
                     VStack {
                         Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")

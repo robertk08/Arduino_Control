@@ -12,7 +12,6 @@ struct MatrixListView: View {
     @ObservedObject var storage2 = AnimationStorage.shared
     @State var showAnimation = false
     @State var animationIndex = 0
-    
     var matrixBinding: Binding<[Matrix]> { showAnimation ? $storage2.animations[animationIndex].matrixes : $storage1.matrixes }
     
     var body: some View {

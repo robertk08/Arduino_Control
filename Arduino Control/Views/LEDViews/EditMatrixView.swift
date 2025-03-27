@@ -10,14 +10,13 @@ import SwiftUI
 struct EditMatrixView: View {
     @AppStorage("isOn") var isOn = true
     @Binding var selectedMatrix: Matrix
+    var showName = false
     
     var body: some View {
         GroupBox {
-                VStack {
-                    selection
-                    MatrixView(matrix: $selectedMatrix, spacing: 5, showName: false)
-                    .padding(.trailing, 30)
-            }
+            selection
+            MatrixView(matrix: $selectedMatrix, spacing: 5, showName: showName, editable: false)
+                .padding(.trailing, 30)
         }
         .frame(height: 345)
         .padding(10)
@@ -41,5 +40,5 @@ struct EditMatrixView: View {
 }
 
 #Preview {
-    EditMatrixView(selectedMatrix: .constant(MatrixStorage.shared.matrixes[0]))
+    EditMatrixView(selectedMatrix: .constant(Matrix()))
 }

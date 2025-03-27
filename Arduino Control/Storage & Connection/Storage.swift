@@ -27,7 +27,6 @@ class MatrixStorage: ObservableObject {
 class AnimationStorage: ObservableObject {
     static let shared = AnimationStorage()
     @Published var animations: [Animation] { didSet { save() } }
-    @Published var emthyMatrix: Matrix = Matrix(id: UUID(), name: "", values: Array(repeating: Array(repeating: false, count: 12), count: 8))
 
     init() {
         animations = UserDefaults.standard.load(forKey: "animations")

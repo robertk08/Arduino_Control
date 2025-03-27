@@ -14,12 +14,10 @@ struct MainView: View {
                 .tabItem {
                     Label("LED", systemImage: "memorychip")
                 }
-            
             AnimationListView()
                 .tabItem {
                     Label("Animation", systemImage: "circle.dotted.and.circle")
                 }
-            
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")

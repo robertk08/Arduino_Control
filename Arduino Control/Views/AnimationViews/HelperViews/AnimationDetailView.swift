@@ -8,21 +8,19 @@
 import SwiftUI
 
 struct AnimationDetailView: View {
-    @Binding var name: String
-    @Binding var delay: Double
-    @Binding var repeating: Bool
+    @Binding var animation: Animation
     
     var body: some View {
         GroupBox {
-            TextField("Animation Name", text: $name)
+            TextField("Animation Name", text: $animation.name)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
             Divider()
                 .padding(.vertical, 5)
-            Text("Time between scenes: \(delay, specifier: "%.2f")s")
-            Slider(value: $delay, in: 0.1...2, step: 0.01)
+            Text("Time between scenes: \(animation.delay, specifier: "%.2f")s")
+            Slider(value: $animation.delay, in: 0.2...2, step: 0.01)
             Divider()
                 .padding(.vertical, 5)
-            Toggle("Repeat Animation", isOn: $repeating)
+            Toggle("Repeat Animation", isOn: $animation.repeating)
                 .tint(Color.accentColor)
         }
         .padding()
@@ -30,5 +28,5 @@ struct AnimationDetailView: View {
 }
 
 #Preview {
-    AnimationDetailView(name: .constant(""), delay: .constant(1), repeating: .constant(false))
+    AnimationDetailView(animation: .constant(Animation()))
 }

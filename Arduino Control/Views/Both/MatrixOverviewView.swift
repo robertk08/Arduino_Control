@@ -12,7 +12,6 @@ struct MatrixOverviewView: View {
     @ObservedObject var storage1 = MatrixStorage.shared
     @ObservedObject var storage2 = AnimationStorage.shared
     @Binding var selectedMatrix: Matrix
-    var selection = true
     var showAnimation = false
     var animationIndex = 0
     var matrixBinding: Binding<[Matrix]> { showAnimation ? $storage2.animations[animationIndex].matrixes : $storage1.matrixes }
@@ -22,11 +21,9 @@ struct MatrixOverviewView: View {
             HStack {
                 ForEach(matrixBinding.indices, id: \.self) { index in
                     Button {
-                        if selection {
-                            selectedMatrix = matrixBinding[index].wrappedValue
-                            selectedMatrix.index = index
-                            Haptic.feedback(.selection)
-                        }
+                        selectedMatrix = matrixBinding[index].wrappedValue
+                        selectedMatrix.index = index
+                        Haptic.feedback(.selection)
                     } label: {
                         MatrixView(matrix: matrixBinding[index])
                             .padding(.top, 10)
@@ -80,5 +77,5 @@ struct MatrixOverviewView: View {
 }
 
 #Preview {
-    MatrixOverviewView(selectedMatrix: .constant(Matrix(id: UUID(), name: "Test", index: 0, values: [])))
+    MatrixOverviewView(selectedMatrix: .constant(Matrix()))
 }
