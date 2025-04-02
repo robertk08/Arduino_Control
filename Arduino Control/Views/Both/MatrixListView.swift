@@ -15,7 +15,7 @@ struct MatrixListView: View {
     var matrixBinding: Binding<[Matrix]> { showAnimation ? $storage2.animations[animationIndex].matrixes : $storage1.matrixes }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             GeometryReader { geometry in
                 List {
                     ForEach(matrixBinding) { $matrix in

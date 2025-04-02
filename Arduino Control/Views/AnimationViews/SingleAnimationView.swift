@@ -16,31 +16,29 @@ struct SingleAnimationView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                NavigationView {
-                    ScrollView {
-                            AnimationDetailView(animation: $animation)
-                            EditMatrixView(selectedMatrix: $viewModel.selectedMatrix, showName: true)
-                            MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, showAnimation: true, animationIndex: index)
-                            Spacer()
-                                .frame(height: 130)
+                ScrollView {
+                    AnimationDetailView(animation: $animation)
+                    EditMatrixView(selectedMatrix: $viewModel.selectedMatrix, showName: true)
+                    MatrixOverviewView(selectedMatrix: $viewModel.selectedMatrix, showAnimation: true, animationIndex: index)
+                    Spacer()
+                        .frame(height: 130)
+                }
+                .navigationTitle(animation.name)
+                .onChange(of: viewModel.selectedMatrix) { _, newValue in
+                    if let selectedMatrixIndex = newValue.index, selectedMatrixIndex > -1 {
+                        animation.matrixes[selectedMatrixIndex] = newValue
                     }
-                    .navigationTitle(animation.name)
-                    .onChange(of: viewModel.selectedMatrix) { _, newValue in
-                        if let selectedMatrixIndex = newValue.index, selectedMatrixIndex > -1 {
-                            animation.matrixes[selectedMatrixIndex] = newValue
-                        }
+                }
+                .toolbar {
+                    Button {
+                        viewModel.showSettingsView = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
                     }
-                    .toolbar {
-                        Button {
-                            viewModel.showSettingsView = true
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    .sheet(isPresented: $viewModel.showSettingsView) {
-                        AnimationSettingsView(isNewAnimation: false, index: index, animation: animation)
-                    }
+                    .buttonStyle(.bordered)
+                }
+                .sheet(isPresented: $viewModel.showSettingsView) {
+                    AnimationSettingsView(isNewAnimation: false, index: index, animation: animation)
                 }
                 Button {
                     viewModel.runAnimation(animation)

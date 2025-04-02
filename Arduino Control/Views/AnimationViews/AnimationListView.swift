@@ -12,7 +12,7 @@ struct AnimationListView: View {
     @State private var isAnimationSettingsViewPresent = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(storage.animations.indices, id: \.self) { index in
                     NavigationLink {

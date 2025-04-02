@@ -15,7 +15,7 @@ struct AnimationSettingsView: View {
     @State var animation: Animation
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 Text("Animation Details")
                     .font(.headline)

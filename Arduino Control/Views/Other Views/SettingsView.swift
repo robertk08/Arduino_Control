@@ -11,7 +11,7 @@ struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Toggle("Show LED Control", isOn: $viewModel.showLEDControl)
                     .tint(.accentColor)

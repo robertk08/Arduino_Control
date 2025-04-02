@@ -11,7 +11,7 @@ struct LEDControlView: View {
     @AppStorage("showLEDControl") var showLEDControl = true
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 if showLEDControl {
                     SingleLEDView()

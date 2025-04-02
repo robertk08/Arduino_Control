@@ -18,7 +18,7 @@ struct EditMatrixView: View {
             MatrixView(matrix: $selectedMatrix, spacing: 5, showName: showName, matrixEditable: true, nameEditable: false)
                 .padding(.trailing, 30)
         }
-        .frame(height: showName ? 370 : 345)
+        .frame(height: showName ? UIScreen.main.bounds.width / 12 * 8 + 105 : UIScreen.main.bounds.width / 12 * 8 + 80)
         .padding(10)
     }
     
