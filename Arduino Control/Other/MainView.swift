@@ -18,6 +18,12 @@ struct MainView: View {
                 .tabItem {
                     Label("Animation", systemImage: "circle.dotted.and.circle")
                 }
+            
+            ServoControlView()
+                .tabItem {
+                    Label("Servo", systemImage: "rotate.3d")
+                }
+            
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape.fill")
