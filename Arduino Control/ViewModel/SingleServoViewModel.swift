@@ -18,9 +18,7 @@ class SingleServoViewModel: ObservableObject {
         sendCommandTimer?.invalidate()
         sendCommandTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) {  _ in
             self.sendCommand(updatedPosition)
-            if updatedPosition.current == 0 || updatedPosition.current == 90 || updatedPosition.current == 180 {
-                Haptic.feedback(.selection)
-            }
+            Haptic.feedback(.selection)
             self.sendCommandTimer = nil
         }
     }
