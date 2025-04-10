@@ -8,83 +8,52 @@
 import SwiftUI
 
 struct InverseKinematics: View {
-    @State private var angle1: Double = 90
-    @State private var angle2: Double = 90
-    @State private var angle3: Double = 90
-    @State private var length1: Double = 100
-    @State private var length2: Double = 50
-    @State private var length3: Double = 100
-    @State private var offsetX2: Double = 0
-    @State private var offsetX3: Double = 0
-    @State private var offsetY2: Double = 100
-    @State private var offsetY3: Double = 50
-    @State private var temp: Double = 0
-    @State private var temp2: Double = 0
-
-
+    @State private var angles: [Double] = [90, 90, 90]
+    @State private var lengths: [Double] = [200, 100, 200]
     
     var body: some View {
         VStack {
             GeometryReader { geometry in
+                let angles = calculateAngles(self.angles)
+                let positions = calculatePostions(angles, geometry)
+                
                 ZStack {
-                    Rectangle()
-                        .fill(Color.red)
-                        .frame(width: 10, height: length1)
-                        .rotationEffect(Angle(degrees: angle1 - 90), anchor: .bottom)
-                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    
-                    Rectangle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: length2)
-                        .rotationEffect(Angle(degrees: angle2 - 90), anchor: .bottom)
-                        .position(x: geometry.size.width / 2 - offsetX2, y: (geometry.size.height / 2)  + length2 / 2 - offsetY2)
-
-                    
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 10, height: length3)
-                        .rotationEffect(Angle(degrees: angle3 - 90), anchor: .bottom)
-                        .position(x: geometry.size.width / 2 - offsetX2 - offsetX3, y: (geometry.size.height / 2) - offsetY2 - offsetY3)
-
-                    
+                    ForEach(0..<3) { i in
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(Color.accentColor.opacity(1 / (Double(i) / 0.7)))
+                            .frame(width: 50, height: lengths[i])
+                            .rotationEffect(Angle(degrees: angles[i]), anchor: .bottom)
+                            .position(positions[i])
+                    }
                 }
-                .frame(height: 300)
-            }
-            .onChange(of: angle1) { _ , _ in
-                let angleInRadians = angle1 * .pi / 180
-
-                offsetX2 = length1 * cos(angleInRadians)
-                offsetY2 = length1 * sin(angleInRadians)
-                angle2 = temp + angle1
-            }
-            .onChange(of: angle2) { _ , _ in
-                temp = angle2 - angle1
-                let angleInRadians = angle2 * .pi / 180
-
-                offsetX3 = length2 * cos(angleInRadians)
-                offsetY3 = length2 * sin(angleInRadians)
-                angle3 = temp2 + angle2
-            }
-            .onChange(of: angle3) { _ , _ in
-                temp2 = angle3 - angle2
             }
             
-            VStack(spacing: 20) {
-                VStack {
-                    Text("Angle 1: \(Int(angle1))°")
-                    Slider(value: $angle1, in: 0...180, step: 1)
-                }
-                VStack {
-                    Text("Angle 2: \(Int(angle2))°")
-                    Slider(value: $angle2, in: 0...180, step: 1)
-                }
-                VStack {
-                    Text("Angle 3: \(Int(angle3))°")
-                    Slider(value: $angle3, in: 0...180, step: 1)
-                }
+            ForEach(0..<3) { i in
+                Text("Angle \(i+1): \(Int(self.angles[i]))°")
+                Slider(value: $angles[i], in: 0...180, step: 1)
             }
             .padding()
         }
+    }
+    
+    func calculateAngles(_ angles: [Double]) -> [Double] {
+        let angle1 = angles[0] - 90
+        let angle2 = angle1 + angles[1] - 90
+        let angle3 = angle2 + angles[2] - 90
+        return [angle1, angle2, angle3]
+    }
+    
+    func calculatePostions(_ angles: [Double],_ geometry: GeometryProxy) -> [CGPoint] {
+        let centerX = geometry.size.width / 2
+        let centerY = geometry.size.height - 20
+        
+        let x1 = lengths[0] * sin(Angle(degrees: angles[0]).radians)
+        let y1 = -lengths[0] * cos(Angle(degrees: angles[0]).radians)
+        
+        let x2 = x1 + lengths[1] * sin(Angle(degrees: angles[1]).radians)
+        let y2 = y1 + (-lengths[1] * cos(Angle(degrees: angles[1]).radians))
+        
+        return [CGPoint(x: centerX, y: centerY - lengths[0] / 2), CGPoint(x: centerX + x1, y: centerY + y1 - lengths[1] / 2), CGPoint(x: centerX + x2, y: centerY + y2 - lengths[2] / 2)]
     }
 }
 
