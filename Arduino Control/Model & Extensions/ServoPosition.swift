@@ -12,9 +12,9 @@ struct ServoPosition: Identifiable, Codable, Equatable {
     var current: Int
     var last: Int
     
-    init(id: Int = 0, current: Int = 0, initial: Int = 0) {
+    init(id: Int = 0, current: Int = 0, last: Int = 0) {
         self.id = id
         self.current = current
-        self.last = initial
+        self.last = last
     }
 }

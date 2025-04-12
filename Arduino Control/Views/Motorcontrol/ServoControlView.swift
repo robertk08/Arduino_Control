@@ -19,7 +19,6 @@ struct ServoControlView: View {
                     }
                 }
             }
-            .navigationTitle("Servo Control")
         }
     }
 }

@@ -14,6 +14,7 @@ struct MainView: View {
                 .tabItem {
                     Label("LED", systemImage: "memorychip")
                 }
+            
             AnimationListView()
                 .tabItem {
                     Label("Animation", systemImage: "circle.dotted.and.circle")
@@ -22,6 +23,11 @@ struct MainView: View {
             ServoControlView()
                 .tabItem {
                     Label("Servo", systemImage: "rotate.3d")
+                }
+            
+            StepperMotorView()
+                .tabItem {
+                    Label("Stepper", systemImage: "arrowshape.left.arrowshape.right.fill")
                 }
             
             SettingsView()

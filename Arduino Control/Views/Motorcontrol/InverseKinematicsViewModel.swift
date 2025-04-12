@@ -11,6 +11,7 @@ import SwiftUICore
 class InverseKinematicsViewModel: ObservableObject {
     @Published var angles: [Double] = [90, 90, 90]
     @Published var lengths: [Double] = [200, 100, 200]
+    @Published var position: CGPoint = .zero
     private var sendCommandTimer: Timer? = nil
     
     func sendCommand(values: [[Int]]) {
@@ -33,7 +34,7 @@ class InverseKinematicsViewModel: ObservableObject {
     
     func calculatePostions(_ angles: [Double],_ geometry: GeometryProxy) -> [CGPoint] {
         let centerX = geometry.size.width / 2
-        let centerY = geometry.size.height - 20
+        let centerY = geometry.size.height
         
         let x1 = lengths[0] * sin(Angle(degrees: angles[0]).radians)
         let y1 = -lengths[0] * cos(Angle(degrees: angles[0]).radians)
@@ -42,4 +43,3 @@ class InverseKinematicsViewModel: ObservableObject {
         return [CGPoint(x: centerX, y: centerY - lengths[0] / 2), CGPoint(x: centerX + x1, y: centerY + y1 - lengths[1] / 2), CGPoint(x: centerX + x2, y: centerY + y2 - lengths[2] / 2)]
     }
 }
-
