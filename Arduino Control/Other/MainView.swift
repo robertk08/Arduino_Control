@@ -20,9 +20,9 @@ struct MainView: View {
                     Label("Animation", systemImage: "circle.dotted.and.circle")
                 }
             
-            ServoControlView()
+            MotorControlView()
                 .tabItem {
-                    Label("Servo", systemImage: "rotate.3d")
+                    Label("Motor", systemImage: "rotate.3d")
                 }
             
             StepperMotorView()

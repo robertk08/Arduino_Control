@@ -45,7 +45,7 @@ struct SingleServoView: View {
                 
                 VStack {
                     Text(String(position.id + 1))
-                    TextField("Enter Servo Position", value: $position.current, formatter: NumberFormatter())
+                    TextField("Enter Position", value: $position.current, formatter: NumberFormatter())
                         .keyboardType(.numberPad)
                         .onSubmit {
                             if position.current < 0 {

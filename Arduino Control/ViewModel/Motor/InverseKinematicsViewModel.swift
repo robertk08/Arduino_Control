@@ -6,17 +6,19 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 class InverseKinematicsViewModel: ObservableObject {
     @Published var angles: [Double] = [90, 90, 90]
-    @Published var lengths: [Double] = [200, 100, 200]
+    @Published var lengths: [Double] = [100, 50, 100]
     @Published var position: CGPoint = .zero
     private var sendCommandTimer: Timer? = nil
-    
-    func sendCommand(values: [[Int]]) {
-        let command = ControlCommand(device: "Servo", action: 0, values: values)
-        ConnectionService.sendRequest(command: command)
+    var solver = InverseKinematicsSolver()
+
+    func tryToSolve() {
+        let solution = solver.findOptimalSolution(point: Point2D(point: position))
+        angles = solution.returnAngles()
+        solver.printConfiguration(solution)
     }
     
     func calculateAngles() -> [Double] {
@@ -32,7 +34,8 @@ class InverseKinematicsViewModel: ObservableObject {
         return [angle1, angle2, angle3]
     }
     
-    func calculatePostions(_ angles: [Double],_ geometry: GeometryProxy) -> [CGPoint] {
+    func calculatePositions(_ geometry: GeometryProxy) -> [CGPoint] {
+        let angles = calculateAngles()
         let centerX = geometry.size.width / 2
         let centerY = geometry.size.height
         
@@ -41,5 +44,10 @@ class InverseKinematicsViewModel: ObservableObject {
         let x2 = x1 + lengths[1] * sin(Angle(degrees: angles[1]).radians)
         let y2 = y1 + (-lengths[1] * cos(Angle(degrees: angles[1]).radians))
         return [CGPoint(x: centerX, y: centerY - lengths[0] / 2), CGPoint(x: centerX + x1, y: centerY + y1 - lengths[1] / 2), CGPoint(x: centerX + x2, y: centerY + y2 - lengths[2] / 2)]
+    }
+
+    func sendCommand(values: [[Int]]) {
+        let command = ControlCommand(device: "Servo", action: 0, values: values)
+        ConnectionService.sendRequest(command: command)
     }
 }

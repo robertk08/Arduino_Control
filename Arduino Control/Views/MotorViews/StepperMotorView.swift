@@ -14,7 +14,7 @@ struct StepperMotorView: View {
         GeometryReader { geometry in
             VStack {
                 ZStack {
-                    TiltRectangleView(roll: $viewModel.speed)
+                    MotionSpeedView(speed: $viewModel.speed)
                         .clipShape(Circle())
                         .frame(width: viewModel.baseSize, height: viewModel.baseSize)
                     

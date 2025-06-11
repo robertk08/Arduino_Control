@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 class SingleAnimationViewModel: ObservableObject {
     @ObservedObject var storage = AnimationStorage.shared
@@ -35,7 +35,7 @@ class SingleAnimationViewModel: ObservableObject {
     private func scheduleNextAnimation() {
         blinkTimer = Timer.scheduledTimer(withTimeInterval: animation.delay, repeats: false) { [weak self] _ in
             guard let self else { return }
-            let currentIndex = self.selectedMatrix.index ?? 0
+            let currentIndex = selectedMatrix.index ?? 0
             let length = animation.matrixes.count - 1
             if currentIndex < length {
                 selectedMatrix = animation.matrixes[currentIndex + 1]
