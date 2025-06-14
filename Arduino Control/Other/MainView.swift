@@ -22,12 +22,7 @@ struct MainView: View {
             
             MotorControlView()
                 .tabItem {
-                    Label("Motor", systemImage: "rotate.3d")
-                }
-            
-            StepperMotorView()
-                .tabItem {
-                    Label("Stepper", systemImage: "arrowshape.left.arrowshape.right.fill")
+                    Label("Motor", systemImage: "gyroscope")
                 }
             
             SettingsView()

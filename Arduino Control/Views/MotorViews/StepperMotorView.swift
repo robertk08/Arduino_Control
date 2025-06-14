@@ -8,42 +8,39 @@
 import SwiftUI
 
 struct StepperMotorView: View {
-    @StateObject private var viewModel = ViewModel()
-
+    @StateObject private var viewModel = StepperMotorViewModel()
+    
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                ZStack {
-                    MotionSpeedView(speed: $viewModel.speed)
-                        .clipShape(Circle())
-                        .frame(width: viewModel.baseSize, height: viewModel.baseSize)
-                    
-                    Circle()
-                        .fill(Color.accentColor.opacity(0.25))
-                        .frame(width: viewModel.baseSize, height: viewModel.baseSize)
-                    
-                    Circle()
-                        .fill(Color.primary)
-                        .frame(width: viewModel.stickSize, height: viewModel.stickSize)
-                        .offset(viewModel.stickPosition)
-                }
-                .contentShape(Rectangle())
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            viewModel.updateDrag(value: value, size: geometry.size)
-                        }
-                        .onEnded { _ in
-                            Haptic.feedback(.light)
-                        }
-                )
-                Stepper(value: $viewModel.speed, in: -5...5) {
-                    Text("\(viewModel.speed)")
-                }
+            ZStack {
+                MotionSpeedView(speed: $viewModel.speed)
+                    .clipShape(Circle())
+                    .frame(width: viewModel.baseSize, height: viewModel.baseSize)
+                    .overlay(
+                        Circle()
+                            .stroke(Color.gray, lineWidth: 4)
+                            .shadow(color: .black.opacity(0.3), radius: 7)
+                            .scaleEffect(1.01)
+                    )
+                
+                Circle()
+                    .fill(.ultraThinMaterial)
+                    .frame(width: viewModel.stickSize, height: viewModel.stickSize)
+                    .offset(viewModel.stickPosition)
+                    .shadow(color: .black.opacity(0.5), radius: 5, x: 0, y: 2)
+                    .animation(.easeInOut(duration: 0.25), value: viewModel.angle)
             }
-            .onAppear {
-                viewModel.start(size: geometry.size)
-            }
+            .contentShape(Rectangle())
+            .onAppear { viewModel.start(size: geometry.size) }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        viewModel.updateDrag(value: value, size: geometry.size)
+                    }
+                    .onEnded { _ in
+                        Haptic.feedback(.light)
+                    }
+            )
         }
     }
 }

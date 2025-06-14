@@ -12,7 +12,13 @@ struct InverseKinematicsView: View {
 
     var body: some View {
         VStack {
-            armView
+            ZStack {
+                StepperMotorView()
+                    .frame(width: 100, height: 100)
+                    .position(x: 70, y: 70)
+                    .zIndex(1)
+                armView
+            }
             manuellView
         }
     }

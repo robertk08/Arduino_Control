@@ -8,25 +8,25 @@
 import Foundation
 
 struct AngleConfiguration: Codable, Equatable {
-    let winkel1: Double
-    let winkel2: Double
-    let winkel3: Double
+    let angle1: Double
+    let angle2: Double
+    let angle3: Double
     let endPosition: Point2D
     let totalMovement: Double
     
-    init(winkel1: Double = 90, winkel2: Double = 90, winkel3: Double = 90, endPosition: Point2D = Point2D(x: 0, y: 250), oldConfiguration: AngleConfiguration? = nil) {
-        self.winkel1 = winkel1
-        self.winkel2 = winkel2
-        self.winkel3 = winkel3
+    init(angle1: Double = 90, angle2: Double = 90, angle3: Double = 90, endPosition: Point2D = Point2D(x: 0, y: 250), oldConfiguration: AngleConfiguration? = nil) {
+        self.angle1 = angle1
+        self.angle2 = angle2
+        self.angle3 = angle3
         self.endPosition = endPosition
         if let old = oldConfiguration {
-            self.totalMovement = abs(winkel1 - old.winkel1) + abs(winkel2 - old.winkel2) + abs(winkel3 - old.winkel3)
+            self.totalMovement = abs(angle1 - old.angle1) + abs(angle2 - old.angle2) + abs(angle3 - old.angle3)
         } else {
             self.totalMovement = 0.0
         }
     }
     
     func returnAngles() -> [Double]{
-        return [winkel1, winkel2, winkel3]
+        return [angle1, angle2, angle3]
     }
 }

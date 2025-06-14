@@ -11,6 +11,8 @@ import CoreMotion
 class MotionManager: ObservableObject {
     private var motion = CMMotionManager()
     @Published var roll: Double = 0.0
+    @Published var pitch: Double = 0.0
+    @Published var yaw: Double = 0.0
     
     init() {
         startMotionUpdates()
@@ -22,8 +24,9 @@ class MotionManager: ObservableObject {
             motion.startDeviceMotionUpdates(to: .main) { data, _ in
                 if let data = data {
                     DispatchQueue.main.async {
-                        self.roll = data.attitude.roll * 0.75
-                        print(self.roll)
+                        self.roll = data.attitude.roll
+                        self.pitch = data.attitude.pitch
+                        self.yaw = data.attitude.yaw
                     }
                 }
             }

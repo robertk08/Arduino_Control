@@ -29,8 +29,6 @@ class InverseKinematicsSolver: ObservableObject {
         return currentConfiguration
     }
     
-    
-    
     func solve1(_ target: Point2D) -> [AngleConfiguration] {
         var validConfigurations: [AngleConfiguration] = []
         
@@ -38,7 +36,7 @@ class InverseKinematicsSolver: ObservableObject {
             return solution
         }
         
-        // Brute-Force Suche durch alle Winkelkombinationen
+        // Brute-Force
         let angleRange = stride(from: 0, through: 180.0, by: angleResolution)
         var totalCombinations = 0
         var validSolutions = 0
@@ -48,55 +46,14 @@ class InverseKinematicsSolver: ObservableObject {
                 for theta3 in angleRange {
                     totalCombinations += 1
                     
-                    let endPosition = forwardKinematics(winkel1: theta1, winkel2: theta2, winkel3: theta3)
+                    let endPosition = forwardKinematics(angle1: theta1, angle2: theta2, angle3: theta3)
                     let distance = endPosition.distance(to: target)
                     
                     if distance <= positionTolerance {
                         let config = AngleConfiguration(
-                            winkel1: theta1,
-                            winkel2: theta2,
-                            winkel3: theta3,
-                            endPosition: endPosition,
-                            oldConfiguration: currentConfiguration
-                        )
-                        validConfigurations.append(config)
-                        validSolutions += 1
-                    }
-                }
-            }
-        }
-        
-        print("Getestete Kombinationen: \(totalCombinations)")
-        print("Gefundene Lösungen: \(validSolutions)")
-        
-        return validConfigurations
-    }
-    
-    func solve2(_ target: Point2D) -> [AngleConfiguration] {
-        var validConfigurations: [AngleConfiguration] = []
-        
-       if let solution = checkRange(target) {
-            return solution
-        }
-        
-        // Brute-Force Suche durch alle Winkelkombinationen
-        let angleRange = stride(from: 0, through: 180.0, by: angleResolution)
-        var totalCombinations = 0
-        var validSolutions = 0
-        
-        for theta1 in angleRange {
-            for theta2 in angleRange {
-                for theta3 in angleRange {
-                    totalCombinations += 1
-                    
-                    let endPosition = forwardKinematics(winkel1: theta1, winkel2: theta2, winkel3: theta3)
-                    let distance = endPosition.distance(to: target)
-                    
-                    if distance <= positionTolerance {
-                        let config = AngleConfiguration(
-                            winkel1: theta1,
-                            winkel2: theta2,
-                            winkel3: theta3,
+                            angle1: theta1,
+                            angle2: theta2,
+                            angle3: theta3,
                             endPosition: endPosition,
                             oldConfiguration: currentConfiguration
                         )
@@ -118,27 +75,27 @@ class InverseKinematicsSolver: ObservableObject {
         let maxReach = lenght1 + lenght2 + lenght3
         let minReach = abs(abs(lenght1 - lenght2) - lenght3)
         
-        var m = target.x / target.y
+        let m = target.x / target.y
         var angle = atan(m)
         angle *= 180 / .pi
         angle += 90
         
         if targetDistance > maxReach {
             print("⚠️ Ziel außerhalb der Reichweite!")
-            return [AngleConfiguration(winkel1: angle, oldConfiguration: currentConfiguration)]
+            return [AngleConfiguration(angle1: angle, oldConfiguration: currentConfiguration)]
         } else if targetDistance < minReach {
             print("⚠️ Ziel außerhalb der Reichweite!")
             angle /= 2
             angle += m > 0 ? 0 : 90
-            return [AngleConfiguration(winkel1: angle, winkel2: m > 0 ? 180 : 0, winkel3: m > 0 ? 180 : 0, oldConfiguration: currentConfiguration)]
+            return [AngleConfiguration(angle1: angle, angle2: m > 0 ? 180 : 0, angle3: m > 0 ? 180 : 0, oldConfiguration: currentConfiguration)]
         }
         return nil
     }
     
-    func forwardKinematics(winkel1: Double, winkel2: Double, winkel3: Double) -> Point2D {
-        var t1 = winkel1
-        var t2 = winkel2 + winkel1  - 90
-        var t3 = winkel3 + t2       - 90
+    func forwardKinematics(angle1: Double, angle2: Double, angle3: Double) -> Point2D {
+        var t1 = angle1
+        var t2 = angle2 + angle1  - 90
+        var t3 = angle3 + t2       - 90
         
         t1 *= .pi / 180.0
         t2 *= .pi / 180.0
@@ -150,10 +107,10 @@ class InverseKinematicsSolver: ObservableObject {
     }
     
     func printConfiguration(_ config: AngleConfiguration) {
-        print("\n📐 Winkel-Konfiguration:")
-        print("   θ1 (Basis): \(String(format: "%.1f", config.winkel1))°")
-        print("   θ2 (Mitte): \(String(format: "%.1f", config.winkel2))°")
-        print("   θ3 (Ende):  \(String(format: "%.1f", config.winkel3))°")
+        print("\n📐 Angle-Config:")
+        print("   θ1 (Basis): \(String(format: "%.1f", config.angle1))°")
+        print("   θ2 (Mitte): \(String(format: "%.1f", config.angle2))°")
+        print("   θ3 (Ende):  \(String(format: "%.1f", config.angle3))°")
         print("   Position: (\(String(format: "%.2f", config.endPosition.x)), \(String(format: "%.2f", config.endPosition.y)))")
         print("   Bewegung: \(String(format: "%.1f", config.totalMovement))°")
     }
