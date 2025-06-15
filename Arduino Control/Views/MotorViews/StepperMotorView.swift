@@ -9,11 +9,12 @@ import SwiftUI
 
 struct StepperMotorView: View {
     @StateObject private var viewModel = StepperMotorViewModel()
+    let isHorizontal: Bool
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                MotionSpeedView(speed: $viewModel.speed)
+                MotionSpeedView(speed: $viewModel.speed, isHorizontal: isHorizontal)
                     .clipShape(Circle())
                     .frame(width: viewModel.baseSize, height: viewModel.baseSize)
                     .overlay(
@@ -32,6 +33,9 @@ struct StepperMotorView: View {
             }
             .contentShape(Rectangle())
             .onAppear { viewModel.start(size: geometry.size) }
+            .onChange(of: viewModel.angle) { _, _ in
+                viewModel.sentCommand()
+            }
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
@@ -46,5 +50,5 @@ struct StepperMotorView: View {
 }
 
 #Preview {
-    StepperMotorView()
+    StepperMotorView(isHorizontal: false)
 }

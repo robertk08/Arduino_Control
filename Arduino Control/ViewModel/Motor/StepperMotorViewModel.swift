@@ -14,6 +14,7 @@ class StepperMotorViewModel: ObservableObject {
     @Published var angle: Double = 0
     @Published var speed: Double = 0
     @Published var stickPosition = CGSize.zero
+    private var speedTimer: Timer? = nil
     private var sendCommandTimer: Timer? = nil
     private var radius: Double = 0
 
@@ -33,7 +34,7 @@ class StepperMotorViewModel: ObservableObject {
     }
     
     func setSpeed() {
-        sendCommandTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+        speedTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             self.angle += self.speed / 10
             self.updatePosition()
         }
@@ -41,5 +42,15 @@ class StepperMotorViewModel: ObservableObject {
     
     private func updatePosition() {
         stickPosition = CGSize(width: radius * cos(angle), height: radius * sin(angle))
+    }
+    
+    func sentCommand() {
+        sendCommandTimer?.invalidate()
+        sendCommandTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) {  _ in
+            let command = ControlCommand(device: "Stepper", action: Int(self.angle) % 360)
+            ConnectionService.sendRequest(command: command)
+            Haptic.feedback(.selection)
+            self.sendCommandTimer = nil
+        }
     }
 }

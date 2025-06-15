@@ -25,7 +25,7 @@ class MotionManager: ObservableObject {
                 if let data = data {
                     DispatchQueue.main.async {
                         self.roll = data.attitude.roll
-                        self.pitch = data.attitude.pitch
+                        self.pitch = data.attitude.pitch * 2
                         self.yaw = data.attitude.yaw
                     }
                 }

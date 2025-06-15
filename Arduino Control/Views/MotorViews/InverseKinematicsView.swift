@@ -9,15 +9,19 @@ import SwiftUI
 
 struct InverseKinematicsView: View {
     @StateObject var viewModel = InverseKinematicsViewModel()
-
+    
     var body: some View {
         VStack {
-            ZStack {
-                StepperMotorView()
-                    .frame(width: 100, height: 100)
-                    .position(x: 70, y: 70)
-                    .zIndex(1)
-                armView
+            GeometryReader { geometry in
+                ZStack {
+                    var isHorizontal = geometry.size.width - 50 > geometry.size.height
+                    StepperMotorView(isHorizontal: isHorizontal)
+                        .frame(width: 100, height: 100)
+                        .position(x: 70, y: 70)
+                        .zIndex(1)
+                    armView
+                    Spacer()
+                }
             }
             manuellView
         }
